@@ -2,7 +2,7 @@ require( "AssetLocation" )
 
 player = {}
 
-function player:new( )
+function player:new( status )
 
 	local x, y = display.contentCenterX, display.contentHeight - 160
 	local newPlayer = display.newGroup( )
@@ -27,8 +27,10 @@ function player:new( )
 
 		self:insert( playerWalk )
 
+		if (status) then
+			playerWalk:play( )
+		end
 
-		playerWalk:play( )
 	end
 
 	function newPlayer:jump( )
