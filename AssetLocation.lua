@@ -1,6 +1,9 @@
 -- game = 30 fps
 -- 200 ms == 6 frame
 
+_cW = display.contentWidth
+_cH = display.contentHeight
+
 sprite = {}
 
 
@@ -97,8 +100,8 @@ imageLocation.button = {
 }
 
 imageLocation.text = {
-	bumped = "Asset/TxtBumpedHdln.png"
-	crushed = "Asset/TxtCrunchedHdln.png"
-	fired = "Asset/TxtFiredHdln.png"
+	bumped = "Asset/TxtBumpedHdln.png",
+	crushed = "Asset/TxtCrunchedHdln.png",
+	fired = "Asset/TxtFiredHdln.png",
 }
 
