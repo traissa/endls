@@ -45,7 +45,7 @@ function scene:create( event )
 				_2DFloor[i].x, _2DFloor[i].y = x+((_2DFloor[i].width)*(i-1)), y
 				_2DFloor[i].onScreen = true
 				self:insert( _2DFloor[i] )
-				-- physics.addBody( _2DFloor[i], "static" , {density=1, friction=0, bounce=0 } )
+				physics.addBody( _2DFloor[i], "static" , {density=1, friction=0, bounce=0 } )
 			end
 
 		end
@@ -150,6 +150,10 @@ function scene:create( event )
 		newBg:move()
 	end
 
+	function sceneGroup:addCoins( )
+		
+	end
+
 	
 	-- require "physics"
 	-- physics.start( )
@@ -166,12 +170,7 @@ function scene:create( event )
 	-- local coins = {}
 
 	-- local function addCoin( )
-	-- 	local y = math.random(display.contentCenterY , display.contentCenterY + 400)
-	-- 	local time = math.random( 3000, 10000 )
-
-	-- 	timer.performWithDelay( time, function ( )
-	-- 		coins [#coins+1]= coinYellow:new( display.contentWidth , y ); addCoin()
-	-- 	end )
+	-- 	
 
 	-- end
 	-- addCoin( )
@@ -210,18 +209,16 @@ function scene:show( event )
 		animation = true
 
 		local floors = sceneGroup:floor( animation)
-			-- sceneGroup:insert( floors )
+		sceneGroup:insert( floors )
 		local background = sceneGroup:background( animation)
-			-- sceneGroup:insert( background )
+		sceneGroup:insert( background )
 
 		local player1 = player:new( "start")
 
 	elseif phase == "did" then
-		-- Called when the scene is now on screen
-		-- 
-		-- INSERT code here to make the scene come alive
-		-- e.g. start timers, begin animation, play audio, etc.
-		-- physics.start()
+		physics.start( )
+		physics.setDrawMode( "hybrid" )
+		
 	end
 end
 
@@ -232,7 +229,7 @@ function scene:hide( event )
 	
 	if event.phase == "will" then
 		animation = false
-		physics.stop()
+		physics.stop( )
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 	end	
@@ -240,15 +237,9 @@ function scene:hide( event )
 end
 
 function scene:destroy( event )
-
-	-- Called prior to the removal of scene's "view" (sceneGroup)
-	-- 
-	-- INSERT code here to cleanup the scene
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	local sceneGroup = self.view
 
-
-	
 	package.loaded[physics] = nil
 	physics = nil
 end

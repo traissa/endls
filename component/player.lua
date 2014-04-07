@@ -7,6 +7,7 @@ function player:new( status )
 	local x, y = display.contentCenterX, display.contentHeight - 160
 	local newPlayer = display.newGroup( )
 	local playerWalk
+	local rotation = 0
 
 	function newPlayer:init( )
 
@@ -22,8 +23,9 @@ function player:new( status )
 		playerWalk.name = "player"
 		playerWalk.x , playerWalk.y = x,y
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
+		player.rotation = rotation
 		
-		-- physics.addBody( playerWalk, {density=1, friction=0, bounce=0 } )
+		physics.addBody( playerWalk, {density=1, friction=0, bounce=0 } )
 
 		self:insert( playerWalk )
 
@@ -37,8 +39,13 @@ function player:new( status )
 		playerWalk:applyForce( 0, -5000*2, playerWalk.x,playerWalk.y )
 	end
 
+	function newPlayer:removePhysicsBody( )
+		physics.removeBody( newPlayer )
+	end
+
 	function newPlayer:died( )
-		
+		self:removePhysicsBody()
+		transition.to( newPlayer, {rotation = -90, time = 5000} )
 	end
 
 	newPlayer:init( )

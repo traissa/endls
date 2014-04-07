@@ -8,6 +8,8 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 local imageData = require ("AssetLocation")
 local physics = require "physics"
+local playerComponent = require "component.player"
+local fileService = require "readFile"
 
 function scene:create( event )
 	local sceneGroup = self.view
@@ -29,15 +31,18 @@ function scene:create( event )
 		-- player.anchorY = 1
 		-- player.y = floor.y - floor.height
 
-		local title = display.newText( self, "endless", display.contentCenterX , .3* display.contentHeight , "Visitor TT1 BRK" , 120 )
-		title:setFillColor(  119/255, 86/255,41/255 )
+		-- local title = display.newText( self, "endless", display.contentCenterX , .3* display.contentHeight , "Visitor TT1 BRK" , 120 )
+		-- title:setFillColor(  119/255, 86/255,41/255 )
 
-		local playBtn = display.newImage( imageLocation.button.play , display.contentWidth*.25, display.contentHeight*.5 )
+		local title = display.newImage( imageLocation.title, display.contentCenterX, display.contentHeight*(231/679) )
+		self:insert(title)
+
+		local playBtn = display.newImage( imageLocation.button.play , display.contentWidth*.25, display.contentHeight*(331/679) )
 		playBtn.name  = "playBtn"
 		self:insert(playBtn)
 		playBtn:addEventListener( "touch", self )
 
-		local rateBtn = display.newImage( imageLocation.button.rate, display.contentWidth*.75, display.contentHeight*.5 )
+		local rateBtn = display.newImage( imageLocation.button.rate, display.contentWidth*.75, display.contentHeight*(331/679) )
 		rateBtn.name  = "rateBtn"
 		self:insert( rateBtn )
 		rateBtn:addEventListener( "touch", self )
@@ -45,12 +50,33 @@ function scene:create( event )
 
 	function sceneGroup:touch (e )
 		if e.phase == "ended"  then
+			local callback
 			if e.target.name == "playBtn" then
-				composer.gotoScene( "gamePlay2D" )
+				function callback( )
+					composer.gotoScene( "gamePlay2D" )
+				end
 			elseif e.target.name == "rateBtn" then
-				
+				function callback( )
+					local device = system.getInfo("platformName")
+
+					if device == "Android" then
+
+					elseif device == "iPhone OS" then
+						-- local yourAppID = ""
+
+						-- local storeReviewURLApple = "http://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?pageNumber=0&sortOrdering=1&type=Purple+Software&mt=8&id=" .. yourAppID
+
+						-- system.openURL(storeReviewURLApple)   
+					end
+				end
 			end
+			self:buttonAnimation(e.target, callback)
 		end
+	end
+
+	function sceneGroup:buttonAnimation(object, callback )
+		object.alpha = .8
+		transition.to( object, {time = 800, onComplete = callback} )
 	end
 
 	sceneGroup:init( )
@@ -62,7 +88,11 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
-		-- Called when the scene is still off screen and is about to move on screen
+		-- physics.start( )
+		-- physics.setGravity( 0,0 )
+		-- local player1 = player:new( "start")
+
+	
 	elseif phase == "did" then
 
 		
@@ -84,6 +114,18 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
+		local settings = loadTable ("settings.json", system.DocumentsDirectory)
+		if settings then
+			if not sound then
+				audio.setVolume( 0)
+			end
+		else
+			settings = {}
+			settings.sound = true
+			settings.highScore = 0
+			saveTable("settings.json", system.DocumentsDirectory, settings)
+		end
+
 	end	
 end
 

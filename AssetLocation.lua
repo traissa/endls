@@ -79,6 +79,8 @@ sprite[6].sequenceData = {name = "blood", start = 1, count = 6, time = 200, loop
 
 imageLocation = {}
 
+imageLocation.title = "Asset/TitleEndless.png"
+
 imageLocation.floor = "Asset/Bg2DFloor.png"
 
 imageLocation.background2D = "Asset/Bg2DMatte.png"
@@ -95,7 +97,7 @@ imageLocation.iPhone = "Asset/Obj3DiPhone.png"
 imageLocation.button = {
 	play = "Asset/BtnPlay.png",
 	okay = "Asset/BtnOkay.png",
-	share = "Asset/BtnShre.png",
+	share = "Asset/BtnShare.png",
 	rate = "Asset/BtnRate.png",
 }
 
