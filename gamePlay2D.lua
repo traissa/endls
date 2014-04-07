@@ -31,7 +31,7 @@ function scene:create( event )
 
 	function sceneGroup:floor( onMove )
 
-		local delta = 4
+		local delta = 2
 		local x = display.contentCenterX
 		local y = display.viewableContentHeight
 		local _2DFloor = {}
@@ -126,7 +126,7 @@ function scene:create( event )
 			local function move( )
 				if onMove then
 					for i=1,2 do
-						_2Dbackground[i].x = _2Dbackground[i].x  - delta
+						_2Dbackground[i].x = _2Dbackground[i].x  - delta/4
 					end
 
 					if _2Dbackground[1].x < 0 then

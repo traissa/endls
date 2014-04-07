@@ -16,7 +16,7 @@ sprite[1].sheetData = {	numFrames = 4*3 ,
 						width = 640/4,
 						height = 510/3,
 						}
-sprite[1].sequenceData = {name = "playerRun", start = 1, count = 12, time = 400, loopCount = 0}
+sprite[1].sequenceData = {name = "playerRun", start = 1, count = 12, time = 800, loopCount = 0}
 
 
 sprite[2] = {}
