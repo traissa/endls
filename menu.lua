@@ -33,17 +33,23 @@ function scene:create( event )
 		title:setFillColor(  119/255, 86/255,41/255 )
 
 		local playBtn = display.newImage( imageLocation.button.play , display.contentWidth*.25, display.contentHeight*.5 )
+		playBtn.name  = "playBtn"
 		self:insert(playBtn)
 		playBtn:addEventListener( "touch", self )
 
-		-- local rateBtn = display.newImage( imageLocation.button.share, display.contentWidth*.75, display.contentHeight*.5 )
-		-- self:insert( rateBtn )
-		-- rateBtn:addEventListener( "touch", self )
+		local rateBtn = display.newImage( imageLocation.button.rate, display.contentWidth*.75, display.contentHeight*.5 )
+		rateBtn.name  = "rateBtn"
+		self:insert( rateBtn )
+		rateBtn:addEventListener( "touch", self )
 	end
 
 	function sceneGroup:touch (e )
 		if e.phase == "ended"  then
-			print( "button check" )
+			if e.target.name == "playBtn" then
+				composer.gotoScene( "gamePlay2D" )
+			elseif e.target.name == "rateBtn" then
+				
+			end
 		end
 	end
 
@@ -83,6 +89,9 @@ end
 
 function scene:destroy( event )
 	local sceneGroup = self.view
+
+	sceneGroup:removeSelf( )
+	sceneGroup = nil
 	
 	-- Called prior to the removal of scene's "view" (sceneGroup)
 	-- 

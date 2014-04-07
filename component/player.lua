@@ -23,7 +23,7 @@ function player:new( status )
 		playerWalk.x , playerWalk.y = x,y
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
 		
-		physics.addBody( playerWalk, {density=1, friction=0, bounce=0 } )
+		-- physics.addBody( playerWalk, {density=1, friction=0, bounce=0 } )
 
 		self:insert( playerWalk )
 
