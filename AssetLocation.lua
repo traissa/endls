@@ -28,7 +28,7 @@ sprite[2].sheetData = {	numFrames = 4*3 ,
 						width = 2560/4,
 						height = 1860/3,
 						}
-sprite[2].sequenceData = {name = "playerWalk", start = 1, count = 12, time = 400, loopCount = 0}
+sprite[2].sequenceData = {name = "playerWalk", start = 1, count = 12, time = 1000, loopCount = 0}
 
 sprite[3] = {}
 sprite[3].name = "coinRed"
