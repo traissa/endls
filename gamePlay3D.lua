@@ -52,6 +52,7 @@ function scene:create( event )
 	listenerBox.alpha = .01
 
 	local person = {}
+	self.personGroup = person
 	local i = 0
 	timer.performWithDelay( 300, function()
 		local randomNumber = math.random( )
@@ -101,6 +102,8 @@ function scene:touch( event )
 	        print( x )
 	        
 	        self.randomPerson.x = x    -- move object based on calculations above
+        elseif event.phase == "ended" then
+	        -- composer.gotoScene( "gamePlay2D" )
 	    end
 	    return true
 	end
