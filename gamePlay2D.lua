@@ -176,9 +176,15 @@ function scene:show( event )
 		animation = true
 
 		local floors = sceneGroup:floor( animation)
+<<<<<<< HEAD
 			-- sceneGroup:insert( floors )
 		local background = sceneGroup:background( animation)
 			-- sceneGroup:insert( background )
+=======
+		-- sceneGroup:insert( floors )
+		local background = sceneGroup:background( animation)
+		-- sceneGroup:insert( background )
+>>>>>>> 8a8b522916f462c00ed836f7375aa84a045d4ad1
 
 
 	elseif phase == "did" then
