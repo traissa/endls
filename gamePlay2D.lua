@@ -20,10 +20,13 @@ physics.start(); physics.pause()
 -- forward declarations and other locals
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
 local animation = true
+
 function scene:create( event )
 
 
 	local sceneGroup = self.view
+	
+	Runtime:addEventListener( "gameOver", sceneGroup )
 
 
 	function sceneGroup:floor( onMove )
@@ -43,9 +46,6 @@ function scene:create( event )
 				_2DFloor[i].onScreen = true
 				self:insert( _2DFloor[i] )
 			end
-
-			
-
 		end
 
 		function newFloor:removePhysicsProp( object)
@@ -86,6 +86,8 @@ function scene:create( event )
 
 		newFloor:init()
 		newFloor:move()
+
+		return newFloor
 	end
 
 
@@ -147,6 +149,8 @@ function scene:create( event )
 
 		newBg:init()
 		newBg:move()
+
+		return newBg
 	end
 
 	function sceneGroup:addcoins( )
@@ -155,14 +159,28 @@ function scene:create( event )
 		local time = math.random( 3000, 10000 )
 
 		timer.performWithDelay( time, function ( )
-			-- if num > 90 then
-				local coins = coinRed:new( display.contentWidth , y ); self:addcoins()
-			-- else
-				-- local coins = coinYellow:new( display.contentWidth , y ); self:addcoins()
-			-- end
-		end )
+			if num > 50 then
+				local coins = coinRed:new( display.contentWidth , y );
+				self:insert( coins )
+			else
+				local coins = coinYellow:new( display.contentWidth , y )
+				self:insert( coins )
+			end
 
+			if animation then self:addcoins() end
+		end )
 	end
+
+	function sceneGroup:addForeTouch( )
+		
+		local rect = display.newRect( display.contentCenterX, display.contentCenterY, display.viewableContentWidth, display.contentHeight )
+		self:insert( rect )
+		rect.alpha = 0.01
+
+		rect:addEventListener( "touch", sceneGroup )
+	end
+
+	
 
 end
 
@@ -178,28 +196,40 @@ function scene:show( event )
 		animation = true
 
 		local background = sceneGroup:background( animation)
+		sceneGroup:insert( background )
 		local floors = sceneGroup:floor( animation)
+		sceneGroup:insert( floors )
 		sceneGroup:addcoins( )
 
 
 	elseif phase == "did" then
 		physics.start( true )
-		-- physics.setDrawMode( "hybrid" )
+		physics.setDrawMode( "hybrid" )
+		Runtime:dispatchEvent( {name = "score", value = 0} )
+		-- Runtime:addEventListener("touch", sceneGroup)
+		
+		
 		local player1 = player:new( "start", sceneGroup)
-		player1:awake()
 
-		Runtime:addEventListener("touch", function (e )
+		sceneGroup:addForeTouch()
+
+		function sceneGroup:touch(e)
 			if e.phase == "ended" then
 				player1:jump()
 			end
-		end)
+		end
 
-
-		Runtime:addEventListener( "gameOver", function ( )
+		function sceneGroup:gameOver( )
 			animation = false
-			composer.gotoScene( "finishGame" )
+			physics.stop( )
+			timer.performWithDelay( 10, function ( )
+				composer.gotoScene( "finishGame" )
+			end )
+		end			
 
-		end )
+
+
+
 		
 	end
 end
@@ -221,9 +251,12 @@ end
 function scene:destroy( event )
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	local sceneGroup = self.view
-
+		Runtime:removeEventListener( "gameOver", sceneGroup )
 	package.loaded[physics] = nil
 	physics = nil
+
+	sceneGroup:removeSelf( )
+	sceneGroup = nil
 end
 
 ---------------------------------------------------------------------------------

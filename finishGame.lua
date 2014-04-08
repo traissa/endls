@@ -74,6 +74,9 @@ function scene:create( event )
 	function sceneGroup:buttonAnimation(object, callback )
 		object.alpha = .8
 		transition.to( object, {time = 800, onComplete = callback} )
+		timer.performWithDelay( 800, function ( )
+			object.alpha = 1
+		end )
 	end
 	sceneGroup:init()
 
@@ -89,7 +92,7 @@ function scene:show( event )
 	elseif phase == "did" then
 		local currentTxt = 0
 		local function scrolltext( )
-			if currentTxt < settings.currentScore then
+			if currentTxt <= settings.currentScore then
 				scoreTxt.text = tostring(currentTxt)
 				currentTxt = currentTxt + 1
 				timer.performWithDelay( 100, scrolltext )
@@ -106,11 +109,7 @@ function scene:hide( event )
 	
 	if event.phase == "will" then
 		
-		if settings.currentScore > settings.highScore then
-			settings.highScore = settings.currentScore
-		end
-		saveTable("settings.json", system.DocumentsDirectory, settings)
-
+		
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 	end	
@@ -124,6 +123,9 @@ function scene:destroy( event )
 	-- INSERT code here to cleanup the scene
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	local sceneGroup = self.view
+
+	sceneGroup:removeSelf( )
+	sceneGroup = nil
 	
 end
 

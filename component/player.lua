@@ -48,9 +48,6 @@ function player:new( status , parentGroup )
 		playerWalk.isAwake = true
 	end
 
-	function newPlayer:awake( )
-		
-	end
 
 	function newPlayer:removePhysicsBody( )
 		physics.removeBody( playerWalk )

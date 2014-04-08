@@ -77,6 +77,9 @@ function scene:create( event )
 	function sceneGroup:buttonAnimation(object, callback )
 		object.alpha = .8
 		transition.to( object, {time = 800, onComplete = callback} )
+		timer.performWithDelay( 800, function ()
+			object.alpha = 1
+		end )
 	end
 
 	sceneGroup:init( )
@@ -137,11 +140,6 @@ function scene:destroy( event )
 
 	sceneGroup:removeSelf( )
 	sceneGroup = nil
-	
-	-- Called prior to the removal of scene's "view" (sceneGroup)
-	-- 
-	-- INSERT code here to cleanup the scene
-	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	
 end
 
