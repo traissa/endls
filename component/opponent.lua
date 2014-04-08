@@ -6,11 +6,10 @@ function opponent:new( status )
 
 	-- generating random x position
 	local x = math.random(0, display.contentWidth)
-	local y = display.contentHeight - 200
+	local y = display.contentHeight - 400
 	local newPerson = display.newGroup( )
-	local playerWalk
 
-	function newPerson:init( )
+	-- function newPerson:init( )
 
 		local spriteLocation = sprite[2].location
 
@@ -20,26 +19,28 @@ function opponent:new( status )
 
 		local sequenceData = sprite[2].sequenceData
 
-		playerWalk = display.newSprite( mySheet, sequenceData )
-		playerWalk.name = "player"
+		local playerWalk = display.newSprite( mySheet, sequenceData )
+		playerWalk.name = "opponent"
 		playerWalk.x , playerWalk.y = x,y
+		-- playerWalk.y = y
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
 		playerWalk.xScale, playerWalk.yScale = .8, .8
 		playerWalk:toBack( )
-		transition.to( playerWalk, {time = 2500, xScale = 2, yScale = 2, y = display.contentHeight + 100, onComplete = function()
+		transition.to( playerWalk, {time = 3500, xScale = 3, yScale = 3, y = display.contentHeight + 700, onComplete = function()
 			if (playerWalk) then
 				playerWalk:removeSelf( )
 				playerWalk = nil
 			end
 		end} )
 
-		self:insert( playerWalk )
+		newPerson:insert( playerWalk )
 
 		playerWalk:play( )
 
-	end
+		-- return playerWalk
+	-- end
 
-	newPerson:init( )
+	-- newPerson:init( )
 	return newPerson
 end
 

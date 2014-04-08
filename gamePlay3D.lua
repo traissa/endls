@@ -51,12 +51,23 @@ function scene:create( event )
 	listenerBox:addEventListener( "touch", self )
 	listenerBox.alpha = .01
 
+
+	local spriteLocation = sprite[7].location
+	local sheetData =  sprite[7].sheetData
+	local mySheet = graphics.newImageSheet( spriteLocation, sheetData )
+	local sequenceData = sprite[7].sequenceData
+	local animatedTiles = display.newSprite( mySheet, sequenceData )
+	animatedTiles.anchorX, animatedTiles.anchorY = .5, 0
+	animatedTiles.x, animatedTiles.y = display.contentCenterX, 720
+
+	animatedTiles:play()
+
 	local person = {}
 	self.personGroup = person
 	local i = 0
 	timer.performWithDelay( 300, function()
 		local randomNumber = math.random( )
-		if (randomNumber > .05) then
+		if (randomNumber > .85) then
 			i = i+1
 			-- print( "Le wild person appear" )
 			person[i] = opponent:new(true)
@@ -78,12 +89,13 @@ function scene:create( event )
 	-- -- all display objects must be inserted into group
 	sceneGroup:insert( farBackground )
 	sceneGroup:insert( tiles)
+	sceneGroup:insert( animatedTiles)
 	sceneGroup:insert( listenerBox)
 	sceneGroup:insert( randomPerson)
 end
 
 function removePerson(object)
-	timer.performWithDelay( 3000, function()
+	timer.performWithDelay( 5000, function()
 		object.isLive = false
 	end )
 end
