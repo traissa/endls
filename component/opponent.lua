@@ -35,14 +35,8 @@ function opponent:new( status )
 
 		self:insert( playerWalk )
 
-		if (status) then
-			playerWalk:play( )
-		end
+		playerWalk:play( )
 
-	end
-
-	function newPerson:died( )
-		
 	end
 
 	newPerson:init( )
