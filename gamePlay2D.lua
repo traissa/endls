@@ -209,9 +209,9 @@ function scene:show( event )
 		animation = true
 
 		local floors = sceneGroup:floor( animation)
-		sceneGroup:insert( floors )
+		-- sceneGroup:insert( floors )
 		local background = sceneGroup:background( animation)
-		sceneGroup:insert( background )
+		-- sceneGroup:insert( background )
 
 		local player1 = player:new( "start")
 

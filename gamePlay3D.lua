@@ -28,6 +28,8 @@ function scene:create( event )
 	local sceneGroup = self.view
 
 	local newFloor = display.newGroup( )
+	local randomPerson = display.newGroup( )
+	self.randomPerson = randomPerson
 
 	local x = display.contentCenterX
 	local y = display.viewableContentHeight
@@ -39,14 +41,69 @@ function scene:create( event )
 	local tiles = display.newImageRect( imageLocation.floor3D, 1280*.6, 1440*.6)
 	tiles.anchorX, tiles.anchorY = .5, 0
 	tiles.x, tiles.y = display.contentCenterX, 750
+	farBackground:toBack( )
+	tiles:toBack( )
 
+	local listenerBox = display.newRect( 0, 0, display.contentWidth, display.contentHeight )
+	self.listenerBox = listenerBox
+	listenerBox.anchorX, listenerBox.anchorY = .5, 0
+	listenerBox.x, listenerBox.y = halfW, 0
+	listenerBox:addEventListener( "touch", self )
+	listenerBox.alpha = .01
+
+	local person = {}
+	local i = 0
+	timer.performWithDelay( 300, function()
+		local randomNumber = math.random( )
+		if (randomNumber > .05) then
+			i = i+1
+			-- print( "Le wild person appear" )
+			person[i] = opponent:new(true)
+			person[i].isLive = true
+			person[i].x = math.random(0, display.contentWidth)
+			randomPerson:insert(person[i])
+
+			for j=i,0,-1 do
+				if (person [j]) then
+					if (person[j].isLive) then
+						person[j]:toFront( )
+					end
+				end
+			end
+			removePerson(person[i])
+		end
+	end, -1 )
 	
 	-- -- all display objects must be inserted into group
 	sceneGroup:insert( farBackground )
 	sceneGroup:insert( tiles)
-	-- sceneGroup:insert( background )
-	-- sceneGroup:insert( grass)
-	-- sceneGroup:insert( crate )
+	sceneGroup:insert( listenerBox)
+	sceneGroup:insert( randomPerson)
+end
+
+function removePerson(object)
+	timer.performWithDelay( 3000, function()
+		object.isLive = false
+	end )
+end
+
+function scene:touch( event )
+	if (event.target == self.listenerBox) then
+	    if event.phase == "began" then
+		
+	        self.markX = self.randomPerson.x    -- store x location of object
+	        -- self.markY = self.randomPerson.y    -- store y location of object
+		
+	    elseif event.phase == "moved" then
+		
+	        local x = (event.x - event.xStart) + self.markX
+	        -- local y = (event.y - event.yStart) + self.markY
+	        print( x )
+	        
+	        self.randomPerson.x = x    -- move object based on calculations above
+	    end
+	    return true
+	end
 end
 
 
@@ -61,15 +118,7 @@ function scene:show( event )
 		-- 
 		-- INSERT code here to make the scene come alive
 		-- e.g. start timers, begin animation, play audio, etc.
-		local person = {}
-		local i = 0
-		timer.performWithDelay( 1500, function()
-			local randomNumber = math.random( )
-			if (randomNumber > .75) then
-				i = i+1
-				person[i] = opponent:new(true)
-			end
-		end, -1 )
+		
 
 		-- give a touch listener on screen
 		physics.start()
