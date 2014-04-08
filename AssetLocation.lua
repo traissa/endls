@@ -74,7 +74,16 @@ sprite[6].sheetData = {	numFrames = 6*1,
 						}
 sprite[6].sequenceData = {name = "blood", start = 1, count = 6, time = 200, loopCount = 1}
 
-
+sprite[7] = {}
+sprite[7].name = "tiles"
+sprite[7].location = "Asset/Bg3DGroundSprite.png"
+sprite[7].sheetData = {	numFrames = 4*4,
+						sheetContentWidth = 2560,
+						sheetContentHeight = 1656,
+						width = 2560/4,
+						height = 1656/4,
+						}
+sprite[7].sequenceData = {name = "tiles", start = 1, count = 16, time = 600, loopCount = 0}
 
 
 imageLocation = {}
