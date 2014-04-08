@@ -11,8 +11,13 @@ display.setStatusBar( display.HiddenStatusBar )
 local composer = require "composer"
 
 -- load menu screen
-<<<<<<< HEAD
 composer.gotoScene( "menu" )
-=======
-composer.gotoScene( "gamePlay3D" )
->>>>>>> 8a8b522916f462c00ed836f7375aa84a045d4ad1
+
+
+
+local function onError (e)
+	return true
+end
+
+Runtime:addEventListener( "unhandledError", onError )
+
