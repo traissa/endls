@@ -11,12 +11,6 @@ local fileService = require "readFile"
 
 
 
-settings = {}
-settings.sound = true
-settings.highScore = 10
-settings.currentScore = 20
-
-
 --------------------------------------------
 
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5

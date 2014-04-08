@@ -9,6 +9,7 @@ local scene = composer.newScene()
 local imageData  = require "AssetLocation"
 local playerComponent = require "component.player"
 local coinComponent = require "component.coin"
+local scoreFile = require "score"
 
 -- include Corona's "physics" library
 local physics = require "physics"
@@ -18,14 +19,9 @@ physics.start(); physics.pause()
 
 -- forward declarations and other locals
 local screenW, screenH, halfW = display.contentWidth, display.contentHeight, display.contentWidth*0.5
-local animation = start
-
+local animation = true
 function scene:create( event )
 
-	-- Called when the scene's view does not exist.
-	-- 
-	-- INSERT code here to initialize the scene
-	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 
 	local sceneGroup = self.view
 
@@ -46,8 +42,9 @@ function scene:create( event )
 				_2DFloor[i].x, _2DFloor[i].y = x+((_2DFloor[i].width)*(i-1)), y
 				_2DFloor[i].onScreen = true
 				self:insert( _2DFloor[i] )
-				physics.addBody( _2DFloor[i], "static" , {density=1, friction=0, bounce=0 } )
 			end
+
+			
 
 		end
 
@@ -66,7 +63,6 @@ function scene:create( event )
 				if onMove then
 					for i=1,2 do
 						_2DFloor[i].x = _2DFloor[i].x - delta
-						-- newFloor:check(_2DFloor[i])
 					end
 
 					if _2DFloor[1].x < 0 then
@@ -97,10 +93,12 @@ function scene:create( event )
 
 		local delta =1
 		local x = display.contentCenterX
-		local y = display.contentHeight - 160
+		local y = display.contentHeight
 		local _2Dbackground= {}
 
 		local newBg = display.newGroup( )
+
+		self:insert( newBg )
 
 		function newBg:init( )
 			for i=1,2 do
@@ -152,50 +150,56 @@ function scene:create( event )
 	end
 
 	function sceneGroup:addcoins( )
-		local y = math.random(display.contentCenterY , display.contentCenterY + 400)
+		local num = math.random(1,100 )
+		local y = math.random(display.contentCenterY , display.contentCenterY + 300)
 		local time = math.random( 3000, 10000 )
 
 		timer.performWithDelay( time, function ( )
-			coins [#coins+1]= coinYellow:new( display.contentWidth , y ); addCoin()
+			-- if num > 90 then
+				local coins = coinRed:new( display.contentWidth , y ); self:addcoins()
+			-- else
+				-- local coins = coinYellow:new( display.contentWidth , y ); self:addcoins()
+			-- end
 		end )
 
 	end
 
 end
 
-
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
 
 	
-	local player1 = player:new( "start")
+	-- local player1 = player:new( "start")
 	
 	if phase == "will" then
 
 		animation = true
 
+		local background = sceneGroup:background( animation)
 		local floors = sceneGroup:floor( animation)
-<<<<<<< HEAD
-			-- sceneGroup:insert( floors )
-		local background = sceneGroup:background( animation)
-			-- sceneGroup:insert( background )
-=======
-		-- sceneGroup:insert( floors )
-		local background = sceneGroup:background( animation)
-		-- sceneGroup:insert( background )
->>>>>>> 8a8b522916f462c00ed836f7375aa84a045d4ad1
+		sceneGroup:addcoins( )
 
 
 	elseif phase == "did" then
-		physics.start( )
-		physics.setDrawMode( "hybrid" )
+		physics.start( true )
+		-- physics.setDrawMode( "hybrid" )
+		local player1 = player:new( "start", sceneGroup)
+		player1:awake()
 
 		Runtime:addEventListener("touch", function (e )
 			if e.phase == "ended" then
 				player1:jump()
 			end
 		end)
+
+
+		Runtime:addEventListener( "gameOver", function ( )
+			animation = false
+			composer.gotoScene( "finishGame" )
+
+		end )
 		
 	end
 end

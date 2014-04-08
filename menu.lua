@@ -114,15 +114,18 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
-		local settings = loadTable ("settings.json", system.DocumentsDirectory)
+		settings = loadTable ("settings.json", system.DocumentsDirectory)
 		if settings then
+			print( "local settings found" )
 			if not sound then
 				audio.setVolume( 0)
 			end
 		else
+			print("local settings not found create table")
 			settings = {}
 			settings.sound = true
 			settings.highScore = 0
+			settings.currentScore = 0
 			saveTable("settings.json", system.DocumentsDirectory, settings)
 		end
 
