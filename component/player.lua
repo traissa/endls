@@ -24,8 +24,6 @@ function player:new( status )
 		playerWalk.x , playerWalk.y = x,y
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
 		player.rotation = rotation
-		
-		physics.addBody( playerWalk, {density=1, friction=0, bounce=0 } )
 
 		self:insert( playerWalk )
 
@@ -39,8 +37,12 @@ function player:new( status )
 		playerWalk:applyForce( 0, -5000*2, playerWalk.x,playerWalk.y )
 	end
 
+	function newPlayer:addBody( )
+		physics.addBody( playerWalk, {density=1, friction=0, bounce=0 } )
+	end
+
 	function newPlayer:removePhysicsBody( )
-		physics.removeBody( newPlayer )
+		physics.removeBody( playerWalk )
 	end
 
 	function newPlayer:died( )
@@ -49,6 +51,8 @@ function player:new( status )
 	end
 
 	newPlayer:init( )
+	newPlayer:addBody( )
+	 -- newPlayer:removePhysicsBody( )
 	return newPlayer
 end
 

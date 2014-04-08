@@ -8,6 +8,7 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 local imageData  = require "AssetLocation"
 local playerComponent = require "component.player"
+local coinComponent = require "component.coin"
 
 -- include Corona's "physics" library
 local physics = require "physics"
@@ -31,7 +32,7 @@ function scene:create( event )
 
 	function sceneGroup:floor( onMove )
 
-		local delta = 2
+		local delta = 4
 		local x = display.contentCenterX
 		local y = display.viewableContentHeight
 		local _2DFloor = {}
@@ -126,7 +127,7 @@ function scene:create( event )
 			local function move( )
 				if onMove then
 					for i=1,2 do
-						_2Dbackground[i].x = _2Dbackground[i].x  - delta/4
+						_2Dbackground[i].x = _2Dbackground[i].x  - delta
 					end
 
 					if _2Dbackground[1].x < 0 then
@@ -150,52 +151,15 @@ function scene:create( event )
 		newBg:move()
 	end
 
-	function sceneGroup:addCoins( )
-		
+	function sceneGroup:addcoins( )
+		local y = math.random(display.contentCenterY , display.contentCenterY + 400)
+		local time = math.random( 3000, 10000 )
+
+		timer.performWithDelay( time, function ( )
+			coins [#coins+1]= coinYellow:new( display.contentWidth , y ); addCoin()
+		end )
+
 	end
-
-	
-	-- require "physics"
-	-- physics.start( )
-	-- physics.setGravity( 0, 9.8 )
-	-- -- physics.setDrawMode( "hybrid" )
-
-	-- require "component.player"
-	-- require "component.coin"
-
-	-- player1 = player:new( )
-
-	-- --randomcoins
-
-	-- local coins = {}
-
-	-- local function addCoin( )
-	-- 	
-
-	-- end
-	-- addCoin( )
-
-
-	-- function listen(event )
-	-- 	if (event.phase == "ended") then
-	-- 		player1:jump()
-	-- 	end
-	-- end
-
-	-- Runtime:addEventListener( "touch", listen )
-
-	-- Runtime:addEventListener("collision" , function (e )
-
-	-- 	print( e.object1.name )
-	-- 	if e.phase == "began" then
-	-- 		-- print( ... )
-	-- 		if e.object1.name == "coin" then e.object1.isVisible = false
-	-- 		elseif e.object2.name == "coin" then  e.object2.isVisible = false
-	-- 		end
-	-- 	end
-
-		
-	-- end)
 
 end
 
@@ -203,21 +167,35 @@ end
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
+
+	
+	local player1 = player:new( "start")
 	
 	if phase == "will" then
 
 		animation = true
 
 		local floors = sceneGroup:floor( animation)
+<<<<<<< HEAD
+			-- sceneGroup:insert( floors )
+		local background = sceneGroup:background( animation)
+			-- sceneGroup:insert( background )
+=======
 		-- sceneGroup:insert( floors )
 		local background = sceneGroup:background( animation)
 		-- sceneGroup:insert( background )
+>>>>>>> 8a8b522916f462c00ed836f7375aa84a045d4ad1
 
-		local player1 = player:new( "start")
 
 	elseif phase == "did" then
 		physics.start( )
 		physics.setDrawMode( "hybrid" )
+
+		Runtime:addEventListener("touch", function (e )
+			if e.phase == "ended" then
+				player1:jump()
+			end
+		end)
 		
 	end
 end
