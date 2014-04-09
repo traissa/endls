@@ -2,12 +2,15 @@ require( "AssetLocation" )
 
 player = {}
 
-function player:new( status )
+function player:new( status , parentGroup )
+
 
 	local x, y = display.contentCenterX, display.contentHeight - 160
 	local newPlayer = display.newGroup( )
 	local playerWalk
 	local rotation = 0
+
+	if parentGroup then parentGroup:insert(newPlayer) end
 
 	function newPlayer:init( )
 
@@ -24,6 +27,7 @@ function player:new( status )
 		playerWalk.x , playerWalk.y = x,y
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
 		player.rotation = rotation
+		playerWalk.isSensor = true
 
 		self:insert( playerWalk )
 
@@ -34,12 +38,16 @@ function player:new( status )
 	end
 
 	function newPlayer:jump( )
-		playerWalk:applyForce( 0, -5000*2, playerWalk.x,playerWalk.y )
+		-- playerWalk:applyForce( 0, -2500*2, playerWalk.x,playerWalk.y )
+		playerWalk:setLinearVelocity( 0,-400 )
 	end
 
 	function newPlayer:addBody( )
-		physics.addBody( playerWalk, {density=1, friction=0, bounce=0 } )
+		local shapePlayer  = {-17,-67,  18,-67,  18,-6,  53,-6,  56,84,  -52,84,  -52,-6,  -17,-6}
+		physics.addBody( playerWalk, {density=1, friction=0, bounce=0, shape = shapePlayer } )
+		playerWalk.isAwake = true
 	end
+
 
 	function newPlayer:removePhysicsBody( )
 		physics.removeBody( playerWalk )
@@ -50,9 +58,57 @@ function player:new( status )
 		transition.to( newPlayer, {rotation = -90, time = 5000} )
 	end
 
+	function newPlayer:addBoundary( )
+		local boundary1= display.newRect(playerWalk.x+ playerWalk.width, 0, 4,display.contentHeight)
+		boundary1.alpha = 0.01
+		boundary1.anchorY, boundary1.anchorY = 0,0
+		self:insert( boundary1)
+		physics.addBody( boundary1, "static", {density=1, friction=0, bounce=0 } )
+
+
+		local boundary2= display.newRect(playerWalk.x-playerWalk.width, 0, 4,display.contentHeight)
+		boundary2.alpha = 0.01
+		boundary2.anchorY, boundary2.anchorY = 0,0
+		self:insert( boundary2)
+		physics.addBody( boundary2, "static", {density=1, friction=0, bounce=0 } )
+
+		local floorBody = display.newRect( 0, display.contentHeight - 160 ,display.contentWidth, 4)
+		floorBody.anchorX, floorBody.anchorY = 0,1
+		floorBody.alpha = 0.01
+		self:insert( floorBody)
+		physics.addBody( floorBody, "static", {density=1, friction=0, bounce=0} )
+
+		local roof = display.newRect( 0, 0,display.contentWidth, 4)
+		roof.anchorX, roof.anchorY = 0,1
+		roof.alpha = 0.01
+		self:insert( roof)
+		physics.addBody( roof, "static", {density=1, friction=0, bounce=0} )
+
+
+		local function adjustPosition( )
+			boundary1.x = playerWalk.x+ playerWalk.width
+			boundary2.x = playerWalk.x- playerWalk.width
+		end
+
+		timer.performWithDelay( 100, adjustPosition , 50 )
+
+	end
+
+	function newPlayer:alwaysAwake( )
+		function funct( )
+			if newPlayer then
+				playerWalk.isAwake = true
+			else
+				Runtime:removeEventListener( "enterFrame", funct )
+			end
+		end
+		Runtime:addEventListener( "enterFrame", funct )
+	end
+
 	newPlayer:init( )
 	newPlayer:addBody( )
-	 -- newPlayer:removePhysicsBody( )
+	newPlayer:addBoundary( )
+	newPlayer:alwaysAwake( )
 	return newPlayer
 end
 
