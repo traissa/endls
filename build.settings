@@ -2,32 +2,61 @@
 -- portrait, portraitUpsideDown, landscapeLeft, landscapeRight
 
 settings = {
-	
 	orientation = {
 		default = "portrait",
 		supported = { "portrait", }
 	},
+	plugins =
+	{
+		-- key is the name passed to Lua's 'require()' This section is only required for builds > 2014.2165
+		["facebook"] =
+		{
+			-- required
+			publisherId = "com.coronalabs",
+			supportedPlatforms = { iphone = true, ["iphone-sim"] = true },
+		},
+	},
 	
 	iphone = {
-		plist = {
-			UIStatusBarHidden = false,
-			UIPrerenderedIcon = true, -- set to false for "shine" overlay
-			--UIApplicationExitsOnSuspend = true, -- uncomment to quit app on suspend
+			plist = {
+				CFBundleIconFiles = {
+		            "Icon.png",
+		            "Icon@2x.png",
+		            "Icon-Small-40.png",
+		            "Icon-Small-40@2x.png",
+		            "Icon-60.png",
+		            "Icon-60@2x.png",
+		            "Icon-72.png",
+		            "Icon-72@2x.png",
+		            "Icon-76.png",
+		            "Icon-76@2x.png",
+		            "Icon-Small-50.png",
+		            "Icon-Small-50@2x.png",
+		            "Icon-Small.png",
+		            "Icon-Small@2x.png"
+	            },
+				UIAppFonts = 
+				{ 
+					"Half Bold Pixel-7.ttf",
+					"Visitor TT1 BRK.ttf"
+				},
+				
+				UIPrerenderedIcon = false, -- set to false for "shine" overlay
+				UIApplicationExitsOnSuspend = false,	-- must be false for single sign-on to work
+				FacebookAppID = "439199716214544",	-- replace XXXXXXXXX with your facebook appId
 
-            --[[
-            -- iOS app URL schemes:
-            CFBundleURLTypes =
-            {
-                {
-                    CFBundleURLSchemes =
-                    {
-                        "fbXXXXXXXXXXXXXX", -- example scheme for facebook
-                        "coronasdkapp", -- example second scheme
-                    }
-                }
-            }
-            --]]
-		}
+				CFBundleURLTypes =
+				{
+					{
+						CFBundleURLSchemes =
+						{
+							"fb439199716214544",	-- replace XXXXXXXXX with your facebook appId
+							
+						}
+					}
+				}
+	            --]]
+			}
 	},
 	
 	--[[
