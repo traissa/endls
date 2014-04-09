@@ -93,7 +93,7 @@ function scene:create( event )
 
 	function sceneGroup:background( onMove )
 
-		local delta =1
+		local delta = .1
 		local x = display.contentCenterX
 		local y = display.contentHeight
 		local _2Dbackground= {}
@@ -207,7 +207,8 @@ function scene:show( event )
 
 	elseif phase == "did" then
 		physics.start( true )
-		physics.setDrawMode( "hybrid" )
+		physics.setGravity( 0, 12 )
+		-- physics.setDrawMode( "hybrid" )
 		Runtime:dispatchEvent( {name = "score", value = 0} )
 		-- Runtime:addEventListener("touch", sceneGroup)
 		

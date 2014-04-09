@@ -5,10 +5,10 @@ player = {}
 function player:new( status , parentGroup )
 
 
-	local x, y = display.contentCenterX, display.contentHeight - 160
+	local x, y = display.contentCenterX - 200, display.contentHeight - 160
 	local newPlayer = display.newGroup( )
 	local playerWalk
-	local rotation = 0
+	-- local rotation = 0
 
 	if parentGroup then parentGroup:insert(newPlayer) end
 
@@ -26,7 +26,8 @@ function player:new( status , parentGroup )
 		playerWalk.name = "player"
 		playerWalk.x , playerWalk.y = x,y
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
-		player.rotation = rotation
+		-- player.rotation = rotation
+		player.isFixedRotation = true
 		playerWalk.isSensor = true
 
 		self:insert( playerWalk )
@@ -44,7 +45,7 @@ function player:new( status , parentGroup )
 
 	function newPlayer:addBody( )
 		local shapePlayer  = {-17,-67,  18,-67,  18,-6,  53,-6,  56,84,  -52,84,  -52,-6,  -17,-6}
-		physics.addBody( playerWalk, {density=1, friction=0, bounce=0, shape = shapePlayer } )
+		physics.addBody( playerWalk, {density=100, friction=0, bounce=0, shape = shapePlayer } )
 		playerWalk.isAwake = true
 	end
 
