@@ -39,7 +39,7 @@ sprite[3].sheetData = {	numFrames = 3*2,
 						width = 105/3,
 						height = 80/2,
 						}
-sprite[3].sequenceData = {name = "coinRed", start = 1, count = 6, time = 200, loopCount = 0}
+sprite[3].sequenceData = {name = "coinRed", start = 1, count = 6, time = 800, loopCount = 0}
 
 sprite[4] = {}
 sprite[4].name = "coinYellow"
@@ -50,7 +50,7 @@ sprite[4].sheetData = {	numFrames = 3*2,
 						width = 105/3,
 						height = 80/2,
 						}
-sprite[4].sequenceData = {name = "coinYellow", start = 1, count = 6, time = 200, loopCount = 0}
+sprite[4].sequenceData = {name = "coinYellow", start = 1, count = 6, time = 800, loopCount = 0}
 
 sprite[5] = {}
 sprite[5].name = "crack"
