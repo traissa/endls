@@ -124,7 +124,7 @@ function scene:hide( event )
 				audio.setVolume( 0)
 			end
 		else
-			print("local settings not found create table")
+			print("local settings not found, create table")
 			settings = {}
 			settings.sound = true
 			settings.highScore = 0

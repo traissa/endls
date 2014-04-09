@@ -8,6 +8,7 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 local imageData  = require "AssetLocation"
 local fileService = require "readFile"
+local facebookfile = require "services.facebookService"
 
 
 
@@ -50,7 +51,7 @@ function scene:create( event )
 		shareBtn:addEventListener( "touch", self )
 		shareBtn.anchorY = 0
 
-		scoreTxt = display.newText( self, " ", display.contentWidth*(92/321) , display.contentHeight*(300/567),  "Visitor TT1 BRK", 120  )
+		scoreTxt = display.newText( self, "", display.contentWidth*(92/321) , display.contentHeight*(300/567),  "Visitor TT1 BRK", 120  )
 
 		local highSCoreTxt = display.newText( self, tostring(settings.highScore), display.contentWidth*(235/321) , display.contentHeight*(300/567),  "Visitor TT1 BRK", 120  )
 	end
@@ -64,9 +65,10 @@ function scene:create( event )
 				end
 			elseif e.target.name == "shareBtn" then
 				function callback( )
-					--share
+					local share = facebookService:new(settings.currentScore)
 				end
 			end
+
 			self:buttonAnimation(e.target, callback)
 		end
 	end

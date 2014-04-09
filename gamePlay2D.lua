@@ -225,7 +225,7 @@ function scene:show( event )
 
 		function sceneGroup:gameOver( )
 			animation = false
-			physics.stop( )
+			-- physics.stop( )
 			timer.performWithDelay( 10, function ( )
 				composer.gotoScene( "finishGame" )
 			end )
@@ -245,7 +245,7 @@ function scene:hide( event )
 	
 	if event.phase == "will" then
 		animation = false
-		physics.stop( )
+		-- physics.stop( )
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 	end	
