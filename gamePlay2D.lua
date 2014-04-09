@@ -195,19 +195,15 @@ function scene:show( event )
 
 		animation = true
 
-<<<<<<< HEAD
-		local floors = sceneGroup:floor( animation)
-			-- sceneGroup:insert( floors )
-		local background = sceneGroup:background( animation)
-			-- sceneGroup:insert( background )
-=======
+		-- local floors = sceneGroup:floor( animation)
+		-- 	-- sceneGroup:insert( floors )
+		-- local background = sceneGroup:background( animation)
+		-- 	-- sceneGroup:insert( background )
 		local background = sceneGroup:background( animation)
 		sceneGroup:insert( background )
 		local floors = sceneGroup:floor( animation)
 		sceneGroup:insert( floors )
 		sceneGroup:addcoins( )
-
->>>>>>> ea557413996cd34d46561777049355c6415859ed
 
 	elseif phase == "did" then
 		physics.start( true )
