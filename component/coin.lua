@@ -27,8 +27,6 @@ function coinRed:new( x, y)
 
 		coin:play( )
 
-		newCoin:autoRemove( )
-
 		newCoin:move( )
 
 		coin:addEventListener( "collision", self )
@@ -50,14 +48,6 @@ function coinRed:new( x, y)
 		-- print(event)
 	end
 
-	function newCoin:autoRemove( )
-		
-		if newCoin.x < 0 then
-			newCoin:remove( )
-		end
-
-	end
-
 	function newCoin:remove( )
 		newCoin:removeSelf( )
 		newCoin = nil
@@ -72,6 +62,9 @@ function coinRed:new( x, y)
 		local function move (  )
 			if onTranslation then
 				coin.x = coin.x - delta
+				if (coin.x - delta < 0) then
+					newCoin:remove()
+				end
 			else 
 				Runtime:removeEventListener( "enterFrame", move )
 			end
@@ -112,8 +105,6 @@ function coinYellow:new( x, y)
 
 		coin:play( )
 
-		newCoin:autoRemove( )
-
 		newCoin:move( )
 
 		coin:addEventListener( "collision", newCoin )
@@ -126,21 +117,11 @@ function coinYellow:new( x, y)
 
 	function newCoin:collision(e)
 		if e.phase== "began" then
-			print( "collision with coin!!!!!!!!!!!!!" )
 			if e.other.name == "player" then
 				self:remove()
 				Runtime:dispatchEvent( {name = "score", value = 1} )
 			end 
 		end
-		-- print(event)
-	end
-
-	function newCoin:autoRemove( )
-		
-		if newCoin.x < 0 then
-			newCoin:remove( )
-		end
-
 	end
 
 	function newCoin:remove( )
@@ -157,6 +138,9 @@ function coinYellow:new( x, y)
 		local function move (  )
 			if onTranslation then
 				coin.x = coin.x - delta
+				if (coin.x - delta < 0) then
+					newCoin:remove()
+				end
 			else 
 				Runtime:removeEventListener( "enterFrame", move )
 			end

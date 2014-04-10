@@ -171,6 +171,7 @@ function scene:create( event )
 				else
 					local coins = coinYellow:new( display.contentWidth , y )
 					self:insert( coins )
+					self.coins:insert(coins)
 				end
 			end
 			if animation then self:addcoins() end
@@ -228,7 +229,6 @@ function scene:show( event )
 				local yDrag = e.y - e.yStart
 				print( yDrag )
 				if (yDrag > 200) then
-					composer.removeScene("gamePlay2D")
 					composer.gotoScene("gamePlay3D")
 				end
 			end
@@ -256,8 +256,9 @@ function scene:hide( event )
 	
 	if event.phase == "will" then
 		animation = false
+		composer.removeScene("gamePlay2D")
 		print( "set animation false" )
-		-- sceneGroup:removeSelf( )
+		sceneGroup:removeSelf( )
 		sceneGroup.coins:removeSelf( )
 		sceneGroup.coins = nil
 		-- physics.stop( )
