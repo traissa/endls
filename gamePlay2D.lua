@@ -218,8 +218,16 @@ function scene:show( event )
 		sceneGroup:addForeTouch()
 
 		function sceneGroup:touch(e)
+			-- if drag to bottom, switch to gamePlay3D
 			if e.phase == "ended" then
 				player1:jump()
+
+				-- switch to gamePlay3D
+				local yDrag = e.y - e.yStart
+				print( yDrag )
+				if (yDrag > 200) then
+					composer.gotoScene("gamePlay3D")
+				end
 			end
 		end
 
