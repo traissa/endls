@@ -157,17 +157,17 @@ function scene:create( event )
 
 	function sceneGroup:addcoins( )
 		local num = math.random(1,100 )
-		-- local y = math.random(display.contentCenterY , display.contentCenterY + 300)
-		local y = display.contentCenterY + 300
-		-- local time = math.random( 3000, 10000 )
-		local time = 500
+		local y = math.random(display.contentCenterY , display.contentCenterY + 300)
+		-- local y = display.contentCenterY + 300
+		local time = math.random( 2000, 10000 )
+		-- local time = 500
 
 		timer.performWithDelay( time, function ( )
 			if (self.coins) then
 				if num > 50 then
-					-- local coins = coinRed:new( display.contentWidth , y );
-					-- self:insert( coins )
-					-- self.coins:insert( coins )
+					local coins = coinRed:new( display.contentWidth , y );
+					self:insert( coins )
+					self.coins:insert( coins )
 				else
 					local coins = coinYellow:new( display.contentWidth , y )
 					self:insert( coins )
@@ -221,13 +221,11 @@ function scene:show( event )
 		function sceneGroup:touch(e)
 			-- if drag to bottom, switch to gamePlay3D
 			if e.phase == "ended" then
-				print( "FORETOOOUCH" )
 				player1:jump()
 				print( sceneGroup.x, sceneGroup.y )
 
 				-- switch to gamePlay3D
 				local yDrag = e.y - e.yStart
-				print( yDrag )
 				if (yDrag > 200) then
 					Runtime:dispatchEvent( {name = "turnTranslationOff"} )
 					composer.gotoScene("gamePlay3D")
@@ -241,12 +239,7 @@ function scene:show( event )
 			timer.performWithDelay( 10, function ( )
 				composer.gotoScene( "finishGame" )
 			end )
-		end			
-
-
-
-
-		
+		end				
 	end
 end
 
