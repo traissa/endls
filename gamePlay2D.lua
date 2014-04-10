@@ -25,6 +25,7 @@ function scene:create( event )
 
 
 	local sceneGroup = self.view
+	sceneGroup.coins = display.newGroup( )
 	
 	Runtime:addEventListener( "gameOver", sceneGroup )
 
@@ -155,24 +156,28 @@ function scene:create( event )
 
 	function sceneGroup:addcoins( )
 		local num = math.random(1,100 )
-		local y = math.random(display.contentCenterY , display.contentCenterY + 300)
-		local time = math.random( 3000, 10000 )
+		-- local y = math.random(display.contentCenterY , display.contentCenterY + 300)
+		local y = display.contentCenterY + 300
+		-- local time = math.random( 3000, 10000 )
+		local time = 500
+		print( time )
 
 		timer.performWithDelay( time, function ( )
-			if num > 50 then
-				local coins = coinRed:new( display.contentWidth , y );
-				self:insert( coins )
-			else
-				local coins = coinYellow:new( display.contentWidth , y )
-				self:insert( coins )
+			if (self.coins) then
+				if num > 50 then
+					local coins = coinRed:new( display.contentWidth , y );
+					self:insert( coins )
+					self.coins:insert( coins )
+				else
+					local coins = coinYellow:new( display.contentWidth , y )
+					self:insert( coins )
+				end
 			end
-
 			if animation then self:addcoins() end
 		end )
 	end
 
 	function sceneGroup:addForeTouch( )
-		
 		local rect = display.newRect( display.contentCenterX, display.contentCenterY, display.viewableContentWidth, display.contentHeight )
 		self:insert( rect )
 		rect.alpha = 0.01
@@ -194,11 +199,6 @@ function scene:show( event )
 	if phase == "will" then
 
 		animation = true
-
-		-- local floors = sceneGroup:floor( animation)
-		-- 	-- sceneGroup:insert( floors )
-		-- local background = sceneGroup:background( animation)
-		-- 	-- sceneGroup:insert( background )
 		local background = sceneGroup:background( animation)
 		sceneGroup:insert( background )
 		local floors = sceneGroup:floor( animation)
@@ -220,12 +220,15 @@ function scene:show( event )
 		function sceneGroup:touch(e)
 			-- if drag to bottom, switch to gamePlay3D
 			if e.phase == "ended" then
+				print( "FORETOOOUCH" )
 				player1:jump()
+				print( sceneGroup.x, sceneGroup.y )
 
 				-- switch to gamePlay3D
 				local yDrag = e.y - e.yStart
 				print( yDrag )
 				if (yDrag > 200) then
+					composer.removeScene("gamePlay2D")
 					composer.gotoScene("gamePlay3D")
 				end
 			end
@@ -253,6 +256,10 @@ function scene:hide( event )
 	
 	if event.phase == "will" then
 		animation = false
+		print( "set animation false" )
+		-- sceneGroup:removeSelf( )
+		sceneGroup.coins:removeSelf( )
+		sceneGroup.coins = nil
 		-- physics.stop( )
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
@@ -263,7 +270,9 @@ end
 function scene:destroy( event )
 	-- e.g. remove display objects, remove touch listeners, save state, etc.
 	local sceneGroup = self.view
-		Runtime:removeEventListener( "gameOver", sceneGroup )
+	print( "destroying scene" )
+	animation = false
+	Runtime:removeEventListener( "gameOver", sceneGroup )
 	package.loaded[physics] = nil
 	physics = nil
 

@@ -32,10 +32,16 @@ function coinRed:new( x, y)
 		newCoin:move( )
 
 		coin:addEventListener( "collision", self )
+		Runtime:addEventListener( "gameOver", self )
+	end
+
+	function newCoin:gameOver()
+		onTranslation = false
 	end
 
 	function newCoin:collision(e)
 		if e.phase== "began" then
+			print( "collision with coin!!!!!!!!!!!!! REDD" )
 			if e.other.name == "player" then
 				self:remove()
 				Runtime:dispatchEvent( {name = "score", value = -10000} )
@@ -111,10 +117,16 @@ function coinYellow:new( x, y)
 		newCoin:move( )
 
 		coin:addEventListener( "collision", newCoin )
+		Runtime:addEventListener( "gameOver", self )
+	end
+
+	function newCoin:gameOver()
+		onTranslation = false
 	end
 
 	function newCoin:collision(e)
 		if e.phase== "began" then
+			print( "collision with coin!!!!!!!!!!!!!" )
 			if e.other.name == "player" then
 				self:remove()
 				Runtime:dispatchEvent( {name = "score", value = 1} )
