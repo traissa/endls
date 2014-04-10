@@ -103,19 +103,21 @@ end
 function scene:touch( event )
 	if (event.target == self.listenerBox) then
 	    if event.phase == "began" then
-		
+
 	        self.markX = self.randomPerson.x    -- store x location of object
-	        -- self.markY = self.randomPerson.y    -- store y location of object
 		
 	    elseif event.phase == "moved" then
 		
 	        local x = (event.x - event.xStart) + self.markX
-	        -- local y = (event.y - event.yStart) + self.markY
-	        print( x )
-	        
+
 	        self.randomPerson.x = x    -- move object based on calculations above
         elseif event.phase == "ended" then
-	        -- composer.gotoScene( "gamePlay2D" )
+        	-- switch to gamePlay2D
+	        local yDrag = event.y - event.yStart
+	        print( yDrag )
+	        if (yDrag < - 200) then
+	        	composer.gotoScene("gamePlay2D")
+	        end
 	    end
 	    return true
 	end
