@@ -108,7 +108,7 @@ function scene:create( event )
 			for i=1,2 do
 				_2Dbackground[i] = display.newImage( imageLocation.background2D )
 				_2Dbackground[i].anchorX, _2Dbackground[i].anchorY = 1,1
-				_2Dbackground[i].x, _2Dbackground[i].y = x+((_2Dbackground[i].width)*(i-1))-5*(i-1), y
+				_2Dbackground[i].x, _2Dbackground[i].y = x+((_2Dbackground[i].width)*(i-1))-7*(i-1), y
 				_2Dbackground[i].onScreen = true
 				self:insert( _2Dbackground[i] )
 			end
@@ -133,11 +133,11 @@ function scene:create( event )
 					end
 
 					if _2Dbackground[1].x < 0 then
-						_2Dbackground[1].x = _2Dbackground[2].x+ _2Dbackground[1].width
+						_2Dbackground[1].x = _2Dbackground[2].x+ _2Dbackground[1].width - 7
 					end
 
 					if _2Dbackground[2].x < 0 then
-						_2Dbackground[2].x = _2Dbackground[1].x+ _2Dbackground[2].width - 5
+						_2Dbackground[2].x = _2Dbackground[1].x+ _2Dbackground[2].width - 7
 					end
 				else
 					Runtime:removeEventListener( "enterFrame", move )
