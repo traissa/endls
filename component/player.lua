@@ -40,12 +40,12 @@ function player:new( status , parentGroup )
 
 	function newPlayer:jump( )
 		-- playerWalk:applyForce( 0, -2500*2, playerWalk.x,playerWalk.y )
-		playerWalk:setLinearVelocity( 0,-400 )
+		playerWalk:setLinearVelocity( 0,-500 )
 	end
 
 	function newPlayer:addBody( )
 		local shapePlayer  = {-17,-67,  18,-67,  18,-6,  53,-6,  56,84,  -52,84,  -52,-6,  -17,-6}
-		physics.addBody( playerWalk, {density=100, friction=0, bounce=0, shape = shapePlayer } )
+		physics.addBody( playerWalk, {density=1, friction=0, bounce=0, shape = shapePlayer } )
 		playerWalk.isAwake = true
 	end
 

@@ -24,21 +24,52 @@ facebookService = {}
 function facebookService:new(score)
 	local service = {}
 
-	local user = loadTable("userdata.json", system.DocumentsDirectory)
-	if (user) then
-		service:facebookLogin(1)
-	else
-		print( "Unknown user!" )
-		-- Add listener to alert
-		native.showAlert( "", "You have to authorize Endless to publish a story on your Facebook wall.", {"OK", "Later"} )
+	function service:networkCheck()
+		-- checking internet connection
+		local http = require("socket.http")
+		local ltn12 = require("ltn12")
+
+		if http.request( "http://www.google.com") == nil  then
+		        native.showAlert( "Your device is not connected to the internet", "Please check again your internet connection.", { "Exit" }, print( "Internet connection is not available" ) )
+			return false
+		end
+
+		print( "Internet connection success!" )
+		return true
 	end
+
+	function service:userCheck()
+		-- if connected to the internet
+		local connection = self:networkCheck()
+
+		if (connection) then
+			local user = loadTable("userdata.json", system.DocumentsDirectory)
+			if (user) then
+				service:facebookLogin(1)
+			else
+				print( "Unknown user!" )
+				-- Add listener to alert
+				local function callback ( event )
+				    if "clicked" == event.action then
+				        if 1 == event.index then
+				            service:facebookLogin(0)
+				            timer.performWithDelay( 300, function() service:facebookLogin(1) end )
+				        end
+				    end
+				end
+
+				native.showAlert( "", "You have to authorize Endless to publish a post on your Facebook wall.", {"OK", "Later"}, callback )
+			end
+		end
+	end
+
 
 	function service:facebookLogin(command)
 		print( "facebookLogin " .. command )
 
-		if (command ==  0) then -- login or share
+		-- if (command ==  0) then -- login or share
 			native.setActivityIndicator( true )
-		end
+		-- end
 
 		-- debugging function
 		local function printTable(t, label, level)
@@ -94,10 +125,10 @@ function facebookService:new(score)
 				end
 
 				-- Various facebook commands
-				if (command == 1) then -- request user information
+				if (command == 0) then -- request user information
 					print( "*** Requesting user information..." )
 					facebook.request( "me" )
-				elseif (command == 10) then -- share score
+				elseif (command == 1) then -- share score
 					print("*** Share score...")
 					local attachment = {
 						name = "Endless words" .. tostring(score),
@@ -117,11 +148,11 @@ function facebookService:new(score)
 				if (not event.isError) then
 					response = json.decode( event.response )
 
-					if (command == 1) then -- getting Facebook name
+					if (command == 0) then -- getting Facebook name
 						print( "getting facebook details" )
 						local saveUserData = saveTable("userdata.json", system.DocumentsDirectory, event.response)
 
-					elseif (command == 5) then -- posting photo
+					elseif (command == 1) then -- posting photo
 						printTable(response, "photo", 3)
 						print( "*** Uploading post to Facebook..." )
 
@@ -145,4 +176,6 @@ function facebookService:new(score)
 			facebook.login(fbAppID, facebookListener)			
 		end
 	end
+
+	service:userCheck()
 end

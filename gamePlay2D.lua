@@ -207,7 +207,7 @@ function scene:show( event )
 
 	elseif phase == "did" then
 		physics.start( true )
-		physics.setGravity( 0, 12 )
+		physics.setGravity( 0, 30 )
 		-- physics.setDrawMode( "hybrid" )
 		Runtime:dispatchEvent( {name = "score", value = 0} )
 		-- Runtime:addEventListener("touch", sceneGroup)
