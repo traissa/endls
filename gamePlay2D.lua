@@ -44,7 +44,7 @@ function scene:create( event )
 			for i=1,2 do
 				_2DFloor[i] = display.newImage( imageLocation.floor )
 				_2DFloor[i].anchorX, _2DFloor[i].anchorY = 1,1
-				_2DFloor[i].x, _2DFloor[i].y = x+((_2DFloor[i].width)*(i-1)), y
+				_2DFloor[i].x, _2DFloor[i].y = x+((_2DFloor[i].width)*(i-1)) - 7*(i-1), y
 				_2DFloor[i].onScreen = true
 				self:insert( _2DFloor[i] )
 			end
@@ -68,11 +68,11 @@ function scene:create( event )
 					end
 
 					if _2DFloor[1].x < 0 then
-						_2DFloor[1].x = _2DFloor[2].x + _2DFloor[1].width
+						_2DFloor[1].x = _2DFloor[2].x + _2DFloor[1].width - 7
 					end
 
 					if _2DFloor[2].x < 0 then
-						_2DFloor[2].x = _2DFloor[1].x + _2DFloor[1].width
+						_2DFloor[2].x = _2DFloor[1].x + _2DFloor[1].width - 7
 					end
 				else 
 					Runtime:removeEventListener( "enterFrame", move )
