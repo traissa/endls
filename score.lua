@@ -7,6 +7,7 @@ local function scoreFunction (e)
 	elseif e.value < 0 then
 		print ("gameOver")
 
+		Runtime:dispatchEvent( {name = "turnTranslationOff"} )
 		Runtime:dispatchEvent( {name = "gameOver"} )
 		
 		if settings.currentScore > settings.highScore then

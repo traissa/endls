@@ -30,11 +30,12 @@ function coinRed:new( x, y)
 		newCoin:move( )
 
 		coin:addEventListener( "collision", self )
-		Runtime:addEventListener( "gameOver", self )
+		Runtime:addEventListener( "turnTranslationOff", self )
 	end
 
-	function newCoin:gameOver()
+	function newCoin:turnTranslationOff()
 		onTranslation = false
+		Runtime:removeEventListener( "turnTranslationOff", self )
 	end
 
 	function newCoin:collision(e)
@@ -108,11 +109,12 @@ function coinYellow:new( x, y)
 		newCoin:move( )
 
 		coin:addEventListener( "collision", newCoin )
-		Runtime:addEventListener( "gameOver", self )
+		Runtime:addEventListener( "turnTranslationOff", self )
 	end
 
-	function newCoin:gameOver()
+	function newCoin:turnTranslationOff()
 		onTranslation = false
+		Runtime:removeEventListener( "turnTranslationOff", self )
 	end
 
 	function newCoin:collision(e)

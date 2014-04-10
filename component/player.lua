@@ -5,7 +5,7 @@ player = {}
 function player:new( status , parentGroup )
 
 
-	local x, y = display.contentCenterX - 200, display.contentHeight - 160
+	local x, y = display.contentCenterX - 170, display.contentHeight - 160
 	local newPlayer = display.newGroup( )
 	local playerWalk
 	-- local rotation = 0
@@ -61,14 +61,16 @@ function player:new( status , parentGroup )
 
 	function newPlayer:addBoundary( )
 		local boundary1= display.newRect(playerWalk.x+ playerWalk.width, 0, 4,display.contentHeight)
-		boundary1.alpha = 0.01
+		-- boundary1.alpha = 0.01
+		boundary1:setFillColor( gray )
 		boundary1.anchorY, boundary1.anchorY = 0,0
 		self:insert( boundary1)
 		physics.addBody( boundary1, "static", {density=1, friction=0, bounce=0 } )
 
 
 		local boundary2= display.newRect(playerWalk.x-playerWalk.width, 0, 4,display.contentHeight)
-		boundary2.alpha = 0.01
+		-- boundary2.alpha = 0.01
+		boundary2:setFillColor( 255/255, 10/255, 20/255 )
 		boundary2.anchorY, boundary2.anchorY = 0,0
 		self:insert( boundary2)
 		physics.addBody( boundary2, "static", {density=1, friction=0, bounce=0 } )
