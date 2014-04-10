@@ -25,6 +25,7 @@ function scene:create( event )
 
 
 	local sceneGroup = self.view
+	sceneGroup.animation = true
 	sceneGroup.coins = display.newGroup( )
 	
 	Runtime:addEventListener( "gameOver", sceneGroup )
@@ -61,7 +62,7 @@ function scene:create( event )
 
 		function newFloor:move()
 			local function move( )
-				if onMove then
+				if sceneGroup.animation then
 					for i=1,2 do
 						_2DFloor[i].x = _2DFloor[i].x - delta
 					end
@@ -107,7 +108,7 @@ function scene:create( event )
 			for i=1,2 do
 				_2Dbackground[i] = display.newImage( imageLocation.background2D )
 				_2Dbackground[i].anchorX, _2Dbackground[i].anchorY = 1,1
-				_2Dbackground[i].x, _2Dbackground[i].y = x+((_2Dbackground[i].width)*(i-1)), y
+				_2Dbackground[i].x, _2Dbackground[i].y = x+((_2Dbackground[i].width)*(i-1))-5*(i-1), y
 				_2Dbackground[i].onScreen = true
 				self:insert( _2Dbackground[i] )
 			end
@@ -126,7 +127,7 @@ function scene:create( event )
 
 		function newBg:move()
 			local function move( )
-				if onMove then
+				if sceneGroup.animation then
 					for i=1,2 do
 						_2Dbackground[i].x = _2Dbackground[i].x  - delta
 					end
@@ -136,7 +137,7 @@ function scene:create( event )
 					end
 
 					if _2Dbackground[2].x < 0 then
-						_2Dbackground[2].x = _2Dbackground[1].x+ _2Dbackground[1].width
+						_2Dbackground[2].x = _2Dbackground[1].x+ _2Dbackground[2].width - 5
 					end
 				else
 					Runtime:removeEventListener( "enterFrame", move )
@@ -160,14 +161,13 @@ function scene:create( event )
 		local y = display.contentCenterY + 300
 		-- local time = math.random( 3000, 10000 )
 		local time = 500
-		print( time )
 
 		timer.performWithDelay( time, function ( )
 			if (self.coins) then
 				if num > 50 then
-					local coins = coinRed:new( display.contentWidth , y );
-					self:insert( coins )
-					self.coins:insert( coins )
+					-- local coins = coinRed:new( display.contentWidth , y );
+					-- self:insert( coins )
+					-- self.coins:insert( coins )
 				else
 					local coins = coinYellow:new( display.contentWidth , y )
 					self:insert( coins )
@@ -229,6 +229,7 @@ function scene:show( event )
 				local yDrag = e.y - e.yStart
 				print( yDrag )
 				if (yDrag > 200) then
+					Runtime:dispatchEvent( {name = "turnTranslationOff"} )
 					composer.gotoScene("gamePlay3D")
 				end
 			end
@@ -256,13 +257,15 @@ function scene:hide( event )
 	
 	if event.phase == "will" then
 		animation = false
-		composer.removeScene("gamePlay2D")
 		print( "set animation false" )
-		sceneGroup:removeSelf( )
+		-- sceneGroup:removeSelf( )
 		sceneGroup.coins:removeSelf( )
 		sceneGroup.coins = nil
 		-- physics.stop( )
 	elseif phase == "did" then
+		physics.stop()
+		sceneGroup.animation = false
+		composer.removeScene("gamePlay2D")
 		-- Called when the scene is now off screen
 	end	
 	
