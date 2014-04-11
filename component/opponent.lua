@@ -6,7 +6,8 @@ function opponent:new( status )
 
 	-- generating random x position
 	local x = math.random(0, display.contentWidth)
-	local y = display.contentHeight - 400
+	-- local x = math.random(0, 3000)
+	local y = display.contentHeight - 150
 	local newPerson = display.newGroup( )
 
 	-- function newPerson:init( )
@@ -24,13 +25,15 @@ function opponent:new( status )
 		playerWalk.x , playerWalk.y = x,y
 		-- playerWalk.y = y
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
-		playerWalk.xScale, playerWalk.yScale = .8, .8
+		playerWalk.xScale, playerWalk.yScale = .3, .3
 		playerWalk:toBack( )
-		transition.to( playerWalk, {time = 3500, xScale = 3, yScale = 3, y = display.contentHeight + 700, onComplete = function()
-			if (playerWalk) then
-				playerWalk:removeSelf( )
-				playerWalk = nil
-			end
+		transition.to( playerWalk, {time = 1000, xScale = .45, yScale = .45, y = display.contentHeight - 410, onComplete = function()
+			transition.to( playerWalk, {time = 6000, xScale = 3, yScale = 3, y = display.contentHeight + 1000, onComplete = function() 
+				if (playerWalk) then
+					playerWalk:removeSelf( )
+					playerWalk = nil
+				end
+			end} )
 		end} )
 
 		newPerson:insert( playerWalk )

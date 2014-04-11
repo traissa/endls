@@ -27,9 +27,6 @@ function scene:create( event )
 
 	local sceneGroup = self.view
 
-	local newFloor = display.newGroup( )
-	local randomPerson = display.newGroup( )
-	self.randomPerson = randomPerson
 
 	local x = display.contentCenterX
 	local y = display.viewableContentHeight
@@ -38,11 +35,11 @@ function scene:create( event )
 	farBackground.anchorX, farBackground.anchorY = .5, 1
 	farBackground.x, farBackground.y = x, y
 
-	local tiles = display.newImageRect( imageLocation.floor3D, 1280*.6, 1440*.6)
-	tiles.anchorX, tiles.anchorY = .5, 0
-	tiles.x, tiles.y = display.contentCenterX, 750
-	farBackground:toBack( )
-	tiles:toBack( )
+	-- local tiles = display.newImageRect( imageLocation.floor3D, 1280*.6, 1440*.6)
+	-- tiles.anchorX, tiles.anchorY = .5, 0
+	-- tiles.x, tiles.y = display.contentCenterX, 750
+	-- farBackground:toBack( )
+	-- tiles:toBack( )
 
 	local listenerBox = display.newRect( 0, 0, display.contentWidth, display.contentHeight )
 	self.listenerBox = listenerBox
@@ -60,11 +57,35 @@ function scene:create( event )
 	animatedTiles.anchorX, animatedTiles.anchorY = .5, 0
 	animatedTiles.x, animatedTiles.y = display.contentCenterX, 720
 
+	local tilesBackground = display.newGroup( )
+	self.tilesBackground = tilesBackground
+	tilesBackground:insert(animatedTiles)
+
+	local randomPerson = display.newGroup( )
+	self.randomPerson = randomPerson
+
 	animatedTiles:play()
 
 	local person = {}
 	self.personGroup = person
 	local i = 0
+
+	local function switchGroup(i)
+		timer.performWithDelay( 1001, function()
+			print( "removing " .. tostring( i ))
+			-- tilesBackground:remove(person[i])
+			randomPerson:insert(person[i])
+			for j=i,0,-1 do
+				if (person [j]) then
+					if (person[j].isLive) then
+						person[j]:toFront( )
+					end
+				end
+			end
+			
+		end )
+	end
+
 	timer.performWithDelay( 300, function()
 		local randomNumber = math.random( )
 		if (randomNumber > .85) then
@@ -73,29 +94,26 @@ function scene:create( event )
 			person[i] = opponent:new(true)
 			person[i].isLive = true
 			person[i].x = math.random(0, display.contentWidth)
-			randomPerson:insert(person[i])
-
-			for j=i,0,-1 do
-				if (person [j]) then
-					if (person[j].isLive) then
-						person[j]:toFront( )
-					end
-				end
-			end
+			-- randomPerson:insert(person[i])
+			tilesBackground:insert(person[i])
+			person[i]:toBack( )
+			-- animatedTiles:toFront( )
+			switchGroup(i)
 			removePerson(person[i])
 		end
 	end, -1 )
 	
 	-- -- all display objects must be inserted into group
 	sceneGroup:insert( farBackground )
-	sceneGroup:insert( tiles)
-	sceneGroup:insert( animatedTiles)
+	-- sceneGroup:insert( tiles)
+	-- sceneGroup:insert( animatedTiles)
 	sceneGroup:insert( listenerBox)
+	sceneGroup:insert( tilesBackground)
 	sceneGroup:insert( randomPerson)
 end
 
 function removePerson(object)
-	timer.performWithDelay( 5000, function()
+	timer.performWithDelay( 8000, function()
 		object.isLive = false
 	end )
 end
