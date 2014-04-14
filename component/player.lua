@@ -5,7 +5,7 @@ player = {}
 function player:new( status , parentGroup )
 
 
-	local x, y = display.contentCenterX -170, display.contentHeight - 160
+	local x, y = display.contentCenterX -170, display.contentHeight - 165
 	local newPlayer = display.newGroup( )
 	local playerWalk
 	-- local rotation = 0

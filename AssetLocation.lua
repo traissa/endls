@@ -11,10 +11,10 @@ sprite[1] = {}
 sprite[1].name = "playerRun"
 sprite[1].location = "Asset/Sprite2DRunning.png"
 sprite[1].sheetData = {	numFrames = 4*3 ,
-						sheetContentWidth = 640,
-						sheetContentHeight = 510, 
-						width = 640/4,
-						height = 510/3,
+						sheetContentWidth = 641,
+						sheetContentHeight = 534, 
+						width = 641/4,
+						height = 534/3,
 						}
 sprite[1].sequenceData = {name = "playerRun", start = 1, count = 12, time = 800, loopCount = 0}
 
@@ -23,10 +23,10 @@ sprite[2] = {}
 sprite[2].name = "playerWalk"
 sprite[2].location = "Asset/Sprite3DWalking.png"
 sprite[2].sheetData = {	numFrames = 4*3 ,
-						sheetContentWidth = 2560,
-						sheetContentHeight = 1860,
-						width = 2560/4,
-						height = 1860/3,
+						sheetContentWidth = 2561,
+						sheetContentHeight = 1884,
+						width = 2561/4,
+						height = 1884/3,
 						}
 sprite[2].sequenceData = {name = "playerWalk", start = 1, count = 12, time = 1000, loopCount = 0}
 

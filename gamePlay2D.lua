@@ -230,7 +230,6 @@ function scene:show( event )
 					transition.to( sceneGroup, {time = 350, y = display.contentHeight , onComplete = function()
 						composer.gotoScene("gamePlay3D")
 					end} )
-					-- composer.gotoScene("gamePlay3D")
 				end
 			end
 		end
