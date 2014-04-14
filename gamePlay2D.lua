@@ -222,13 +222,14 @@ function scene:show( event )
 			-- if drag to bottom, switch to gamePlay3D
 			if e.phase == "ended" then
 				player1:jump()
-				print( sceneGroup.x, sceneGroup.y )
-
 				-- switch to gamePlay3D
 				local yDrag = e.y - e.yStart
 				if (yDrag > 200) then
 					Runtime:dispatchEvent( {name = "turnTranslationOff"} )
-					composer.gotoScene("gamePlay3D")
+					transition.to( sceneGroup, {time = 350, y = display.contentHeight , onComplete = function()
+						composer.gotoScene("gamePlay3D")
+					end} )
+					-- composer.gotoScene("gamePlay3D")
 				end
 			end
 		end

@@ -53,7 +53,8 @@ function scene:create( event )
 			local callback
 			if e.target.name == "playBtn" then
 				function callback( )
-					composer.gotoScene( "gamePlay2D" )
+					-- composer.gotoScene( "gamePlay3D" )
+					composer.gotoScene( "gamePlay2D")
 				end
 			elseif e.target.name == "rateBtn" then
 				function callback( )

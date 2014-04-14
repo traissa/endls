@@ -57,12 +57,11 @@ function scene:create( event )
 	animatedTiles.anchorX, animatedTiles.anchorY = .5, 0
 	animatedTiles.x, animatedTiles.y = display.contentCenterX, 720
 
-	local tilesBackground = display.newGroup( )
-	self.tilesBackground = tilesBackground
-	tilesBackground:insert(animatedTiles)
+	local peopleFar = display.newGroup( )
+	self.peopleFar = peopleFar
 
-	local randomPerson = display.newGroup( )
-	self.randomPerson = randomPerson
+	local peopleClose = display.newGroup( )
+	self.peopleClose = peopleClose
 
 	animatedTiles:play()
 
@@ -73,8 +72,9 @@ function scene:create( event )
 	local function switchGroup(i)
 		timer.performWithDelay( 1001, function()
 			print( "removing " .. tostring( i ))
-			-- tilesBackground:remove(person[i])
-			randomPerson:insert(person[i])
+			-- peopleFar:remove(person[i])
+			-- person[i].x = person[i].x + -1*(peopleClose.x)
+			peopleClose:insert(person[i])
 			for j=i,0,-1 do
 				if (person [j]) then
 					if (person[j].isLive) then
@@ -86,18 +86,18 @@ function scene:create( event )
 		end )
 	end
 
-	timer.performWithDelay( 300, function()
+	timer.performWithDelay( 3500, function()
 		local randomNumber = math.random( )
-		if (randomNumber > .85) then
+		if (randomNumber) then
 			i = i+1
 			-- print( "Le wild person appear" )
-			person[i] = opponent:new(true)
+			person[i] = opponent:new(true, peopleClose)
 			person[i].isLive = true
-			person[i].x = math.random(0, display.contentWidth)
-			-- randomPerson:insert(person[i])
-			tilesBackground:insert(person[i])
+			-- person[i].x = math.random(0, display.contentWidth)
+			-- peopleClose:insert(person[i])
+			person[i].x = person[i].x + -1*(peopleFar.x)
+			peopleFar:insert(person[i])
 			person[i]:toBack( )
-			-- animatedTiles:toFront( )
 			switchGroup(i)
 			removePerson(person[i])
 		end
@@ -105,11 +105,10 @@ function scene:create( event )
 	
 	-- -- all display objects must be inserted into group
 	sceneGroup:insert( farBackground )
-	-- sceneGroup:insert( tiles)
-	-- sceneGroup:insert( animatedTiles)
+	sceneGroup:insert( peopleFar)
+	sceneGroup:insert( animatedTiles)
 	sceneGroup:insert( listenerBox)
-	sceneGroup:insert( tilesBackground)
-	sceneGroup:insert( randomPerson)
+	sceneGroup:insert( peopleClose)
 end
 
 function removePerson(object)
@@ -122,13 +121,15 @@ function scene:touch( event )
 	if (event.target == self.listenerBox) then
 	    if event.phase == "began" then
 
-	        self.markX = self.randomPerson.x    -- store x location of object
+	        self.markX = self.peopleClose.x    -- store x location of object
 		
 	    elseif event.phase == "moved" then
 		
 	        local x = (event.x - event.xStart) + self.markX
 
-	        self.randomPerson.x = x    -- move object based on calculations above
+	        self.peopleClose.x = x    -- move object based on calculations above
+	        self.peopleFar.x = x
+	        -- self.personGroup.x = x
         elseif event.phase == "ended" then
         	-- switch to gamePlay2D
 	        local yDrag = event.y - event.yStart

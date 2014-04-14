@@ -2,10 +2,11 @@ require( "AssetLocation" )
 
 opponent = {}
 
-function opponent:new( status )
+function opponent:new( status, touchGroup )
 
 	-- generating random x position
 	local x = math.random(0, display.contentWidth)
+	-- local x = 320
 	-- local x = math.random(0, 3000)
 	local y = display.contentHeight - 150
 	local newPerson = display.newGroup( )
@@ -26,11 +27,16 @@ function opponent:new( status )
 		-- playerWalk.y = y
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
 		playerWalk.xScale, playerWalk.yScale = .3, .3
-		playerWalk:toBack( )
+		playerWalk:toBack( ) 
+
+		local initx = touchGroup.x
 		transition.to( playerWalk, {time = 1000, xScale = .45, yScale = .45, y = display.contentHeight - 410, onComplete = function()
-			transition.to( playerWalk, {time = 6000, xScale = 3, yScale = 3, y = display.contentHeight + 1000, onComplete = function() 
+			-- timer.performWithDelay( 20, function() end )
+			transition.to( playerWalk, {time = 6000, xScale = 3, yScale = 3, y = display.contentHeight + 1000, transition = easing.inSine , onComplete = function() 
 				if (playerWalk) then
 					playerWalk:removeSelf( )
+					local finalx = x + (touchGroup.x - initx)
+					print( "final position " .. tostring( finalx ) )
 					playerWalk = nil
 				end
 			end} )
