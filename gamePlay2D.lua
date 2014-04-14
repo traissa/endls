@@ -33,7 +33,7 @@ function scene:create( event )
 
 	function sceneGroup:floor( onMove )
 
-		local delta = 4
+		local delta = 12
 		local x = display.contentCenterX
 		local y = display.viewableContentHeight
 		local _2DFloor = {}
@@ -157,7 +157,8 @@ function scene:create( event )
 
 	function sceneGroup:addcoins( )
 		local num = math.random(1,100 )
-		local y = math.random(display.contentCenterY , display.contentCenterY + 300)
+		-- local y = math.random(display.contentCenterY , display.contentCenterY + 200)
+		local y = math.random(display.contentCenterY - 500, display.contentCenterY + 200)
 		-- local y = display.contentCenterY + 300
 		local time = math.random( 2000, 10000 )
 		-- local time = 500

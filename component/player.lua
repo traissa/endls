@@ -26,6 +26,7 @@ function player:new( status , parentGroup )
 		playerWalk.name = "player"
 		playerWalk.x , playerWalk.y = x,y
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
+		playerWalk.xScale, playerWalk.yScale = .75, .75
 		-- player.rotation = rotation
 		player.isFixedRotation = true
 		playerWalk.isSensor = true
@@ -40,7 +41,7 @@ function player:new( status , parentGroup )
 
 	function newPlayer:jump( )
 		-- playerWalk:applyForce( 0, -2500*2, playerWalk.x,playerWalk.y )
-		playerWalk:setLinearVelocity( 0,-500 )
+		playerWalk:setLinearVelocity( 0,-800 )
 	end
 
 	function newPlayer:addBody( )

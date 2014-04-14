@@ -5,7 +5,7 @@ coinRed = {}
 function coinRed:new( x, y)
 	local newCoin = display.newGroup( )
 	local coin
-	local delta = 4
+	local delta = 12
 	local onTranslation = true
 
 	function newCoin:init( )
@@ -84,7 +84,7 @@ coinYellow = {}
 function coinYellow:new( x, y)
 	local newCoin = display.newGroup( )
 	local coin
-	local delta = 4
+	local delta = 12
 	local onTranslation = true
 
 	function newCoin:init( )

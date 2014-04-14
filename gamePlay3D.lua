@@ -125,15 +125,23 @@ function scene:touch( event )
 		
 	    elseif event.phase == "moved" then
 		
-	        local x = (event.x - event.xStart) + self.markX
-
-	        self.peopleClose.x = x    -- move object based on calculations above
-	        self.peopleFar.x = x
-	        -- self.personGroup.x = x
+	        -- local x = (event.x - event.xStart) + self.markX
         elseif event.phase == "ended" then
+        	-- "move" to right/left by tapping
+	        local xPos
+	        print( event.x )
+
+	        if (event.x > 320 ) then
+	        	xPos = self.markX - display.contentWidth/3
+	        else
+	        	xPos = self.markX + display.contentWidth/3
+	        end
+
+	        transition.to( self.peopleClose, {time = 300, x = xPos, transition = easing.inOutSine} )
+	        transition.to( self.peopleFar, {time = 300, x = xPos, transition = easing.inOutSine} )
         	-- switch to gamePlay2D
 	        local yDrag = event.y - event.yStart
-	        print( yDrag )
+	        -- print( yDrag )
 	        if (yDrag < - 200) then
 	        	composer.gotoScene("gamePlay2D")
 	        end
