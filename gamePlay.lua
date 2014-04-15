@@ -48,7 +48,7 @@ function scene:create( event )
 	listenerBox.anchorX, listenerBox.anchorY = .5, 0
 	listenerBox.x, listenerBox.y = halfW, 0
 	listenerBox:addEventListener( "touch", self )
-	listenerBox.alpha = .01
+	listenerBox.alpha = .5
 
 	-- so fake 3D moving tiles
 	local spriteLocation = sprite[7].location
@@ -113,25 +113,30 @@ function scene:create( event )
 
 	function removePerson(object)
 		timer.performWithDelay( 8000, function()
-			object.isLive = false
-			object:removeEventListener( "personOnScreen", listenerFunction )
+			-- if the object still exist, remove listener
+			if (sceneGroup.animation) then
+				object.isLive = false
+				object:removeEventListener( "personOnScreen", listenerFunction )
+			end
 		end )
 	end
 
 	timer.performWithDelay( 3500, function()
 		local randomNumber = math.random( )
 		if (randomNumber) then
-			i = i+1
-			-- print( "Le wild person appear" )
-			person[i] = opponent:new(true, peopleClose)
-			person[i].isLive = true
-			-- person[i].x = math.random(0, display.contentWidth)
-			-- peopleClose:insert(person[i])
-			person[i].x = person[i].x + -1*(peopleFar.x)
-			peopleFar:insert(person[i])
-			person[i]:toBack( )
-			switchGroup(i)
-			removePerson(person[i])
+			if (sceneGroup.animation) then
+				i = i+1
+				-- print( "Le wild person appear" )
+				person[i] = opponent:new(true, peopleClose)
+				person[i].isLive = true
+				-- person[i].x = math.random(0, display.contentWidth)
+				-- peopleClose:insert(person[i])
+				person[i].x = person[i].x + -1*(peopleFar.x)
+				peopleFar:insert(person[i])
+				person[i]:toBack( )
+				switchGroup(i)
+				removePerson(person[i])
+			end
 		end
 	end, -1 )
 	animatedTilesRight.alpha = 0
@@ -289,25 +294,22 @@ function scene:create( event )
 
 	function sceneGroup:addcoins( )
 		local num = math.random(1,100 )
-		-- local y = math.random(display.contentCenterY , display.contentCenterY + 200)
-		-- local y = math.random(display.contentCenterY - 500, display.contentCenterY + 200)
-		local y = display.contentCenterY + 150
+		local y = math.random(display.contentCenterY - 500, display.contentCenterY + 200)
+		-- local y = display.contentCenterY + 150
 		-- local time = math.random( 2000, 10000 )
 		local time = 500
 
 		timer.performWithDelay( time, function ( )
 			if (gamePlay2D.coins) then
 				if num > 50 then
-					-- local coins = coinRed:new( display.contentWidth , y );
-					-- gamePlay2D:insert( coins )
-					-- self.coins:insert( coins )
+					local coins = coinRed:new( display.contentWidth , y );
+					gamePlay2D.display:insert( coins )
 				else
 					local coins = coinYellow:new( display.contentWidth , y )
 					gamePlay2D.display:insert( coins )
-					-- self.coins:insert( coins )
 				end
 			end
-			if animation then self:addcoins() end
+			if self.animation then self:addcoins() end
 		end )
 	end
 
@@ -320,10 +322,8 @@ function scene:create( event )
 		rect:addEventListener( "touch", self )
 	end
 
-	local background = sceneGroup:background( animation)
-	-- sceneGroup:insert( background )
-	local floors = sceneGroup:floor( animation)
-	-- sceneGroup:insert( floors )
+	local background = sceneGroup:background( sceneGroup.animation)
+	local floors = sceneGroup:floor( sceneGroup.animation)
 	sceneGroup:addcoins( )
 	sceneGroup:addForeTouch()
 
@@ -333,28 +333,20 @@ function scene:create( event )
 	function sceneGroup:touch(e)
 		-- if drag to bottom, switch to gamePlay3D
 		if (e.target == self.rect) then
-			if (e.phase == "ended") then
-				transition.to( scene.gamePlay2D.display, { time = 400, x = display.contentCenterX-230, xScale = .5, yScale = .5, onComplete = function()
-					transition.to( scene.gamePlay2D.display, {time = 700, x = display.contentCenterX-230, y = display.contentHeight-90} )
-				end} )
-				transition.to( scene.gamePlay2D.frame, { time = 400, x = display.contentCenterX-230, xScale = .5, yScale = .5, onComplete = function()
-					transition.to( scene.gamePlay2D.frame, {time = 700, x = display.contentCenterX-230, y = display.contentHeight-90} )
-				end} )
-				timer.performWithDelay( 1500, function ()
-					print( scene.gamePlay2D.display.x, scene.gamePlay2D.display.y, scene.gamePlay2D.frame.width )
-					-- body
-				end )
-			end
 			if e.phase == "ended" then
-				player1:jump()
 				-- switch to gamePlay3D
-				-- local yDrag = e.y - e.yStart
-				-- if (yDrag > 200) then
-				-- 	Runtime:dispatchEvent( {name = "turnTranslationOff"} )
-				-- 	transition.to( sceneGroup, {time = 350, y = display.contentHeight , onComplete = function()
-				-- 		composer.gotoScene("gamePlay3D")
-				-- 	end} )
-				-- end
+				local yDrag = e.y - e.yStart
+				if (yDrag > 200) then
+					transition.to( scene.gamePlay2D.display, { time = 400, x = display.contentCenterX-230, xScale = .5, yScale = .5, onComplete = function()
+						transition.to( scene.gamePlay2D.display, {time = 700, x = display.contentCenterX-230, y = display.contentHeight-90} )
+					end} )
+					transition.to( scene.gamePlay2D.frame, { time = 400, x = display.contentCenterX-230, xScale = .5, yScale = .5, onComplete = function()
+						scene.listenerBox:toFront( )
+						transition.to( scene.gamePlay2D.frame, {time = 700, x = display.contentCenterX-230, y = display.contentHeight-90} )
+					end} )
+				else
+					player1:jump()
+				end
 			end
 			return true
 		end
@@ -362,7 +354,9 @@ function scene:create( event )
 
 	function sceneGroup:gameOver( )
 		animation = false
-		-- physics.stop( )
+		self.animation = false
+		Runtime:dispatchEvent( {name = "turnTranslationOff"} )
+		physics.stop( )
 		timer.performWithDelay( 10, function ( )
 			composer.gotoScene( "finishGame" )
 		end )
@@ -442,6 +436,7 @@ function scene:show( event )
 	if phase == "will" then
 		-- Called when the scene is still off screen and is about to move on screen
 		animation = true
+		sceneGroup.animation = true
 
 	elseif phase == "did" then
 		-- Called when the scene is now on screen
@@ -466,14 +461,15 @@ function scene:hide( event )
 	
 	if event.phase == "will" then
 		animation = false
+		self.animation = false
 		print( "set animation false" )
 		-- sceneGroup:removeSelf( )
+		sceneGroup.animation = false
 		scene.gamePlay2D.coins:removeSelf( )
 		scene.gamePlay2D.coins = nil
-		-- physics.stop( )
+		physics.stop( )
 	elseif phase == "did" then
-		physics.stop()
-		sceneGroup.animation = false
+		-- physics.stop()
 		composer.removeScene("gamePlay")
 		-- Called when the scene is now off screen
 	end	
@@ -484,7 +480,7 @@ function scene:destroy( event )
 
 	local sceneGroup = self.view
 	print( "destroying scene" )
-	animation = false
+	-- animation = false
 	Runtime:removeEventListener( "gameOver", sceneGroup )
 	package.loaded[physics] = nil
 	physics = nil
