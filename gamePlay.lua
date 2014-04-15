@@ -48,7 +48,7 @@ function scene:create( event )
 	listenerBox.anchorX, listenerBox.anchorY = .5, 0
 	listenerBox.x, listenerBox.y = halfW, 0
 	listenerBox:addEventListener( "touch", self )
-	listenerBox.alpha = .5
+	listenerBox.alpha = .01
 
 	-- so fake 3D moving tiles
 	local spriteLocation = sprite[7].location
@@ -75,6 +75,7 @@ function scene:create( event )
 	self.tilesRight = animatedTilesRight
 	self.tilesLeft = animatedTilesLeft
 
+	-- Groups of people passing by
 	local peopleFar = display.newGroup( )
 	self.peopleFar = peopleFar
 
@@ -89,29 +90,29 @@ function scene:create( event )
 	self.personGroup = person
 	local i = 0
 
-	local function switchGroup(i)
-		timer.performWithDelay( 1001, function()
-			print( "removing " .. tostring( i ))
-			-- peopleFar:remove(person[i])
-			-- person[i].x = person[i].x + -1*(peopleClose.x)
-			peopleClose:insert(person[i])
-			for j=i,0,-1 do
-				if (person [j]) then
-					if (person[j].isLive) then
-						person[j]:toFront( )
-						person[j]:addEventListener( "personOnScreen", listenerFunction )
-					end
-				end
-			end
-			
-		end )
-	end
-
-	function listenerFunction(event)
+	local function listenerFunction(event)
 		print( tostring( event.position ) )
 	end
 
-	function removePerson(object)
+	local function switchGroup(i)
+		timer.performWithDelay( 1001, function()
+			print( "removing " .. tostring( i ))
+			if (person[i]) then
+				peopleClose:insert(person[i])
+				for j=i,0,-1 do
+					if (person [j]) then
+						if (person[j].isLive) then
+							person[j]:toFront( )
+							person[j]:addEventListener( "personOnScreen", listenerFunction )
+						end
+					end
+				end
+			end
+		end )
+	end
+
+
+	local function removePerson(object)
 		timer.performWithDelay( 8000, function()
 			-- if the object still exist, remove listener
 			if (sceneGroup.animation) then
@@ -126,11 +127,8 @@ function scene:create( event )
 		if (randomNumber) then
 			if (sceneGroup.animation) then
 				i = i+1
-				-- print( "Le wild person appear" )
 				person[i] = opponent:new(true, peopleClose)
 				person[i].isLive = true
-				-- person[i].x = math.random(0, display.contentWidth)
-				-- peopleClose:insert(person[i])
 				person[i].x = person[i].x + -1*(peopleFar.x)
 				peopleFar:insert(person[i])
 				person[i]:toBack( )
@@ -152,6 +150,7 @@ function scene:create( event )
 	gamePlay3D:insert( listenerBox)
 	gamePlay3D:insert( peopleClose)
 
+	--=============================================================================================
 	-- gamePlay2D
 	local gamePlay2D = {}
 	self.gamePlay2D = gamePlay2D
@@ -161,6 +160,7 @@ function scene:create( event )
 	gamePlay2D.display = display.newGroup( )
 	gamePlay2D.display.anchorX, gamePlay2D.display.anchorY = .5, .5
 	gamePlay2D.frame.anchorX, gamePlay2D.frame.anchorY = .5, .5
+	-- gamePlay2D.display:insert( gamePlay2D.frame )
 
 	sceneGroup.animation = true
 	-- sceneGroup.coins = display.newGroup( )
@@ -330,6 +330,28 @@ function scene:create( event )
 	local player1 = player:new( "start", sceneGroup)
 	self.gamePlay2D.display:insert(player1)
 
+	-- reverse animation
+	local function switchGamePlay(event)
+		if (event.phase == "ended") then
+			transition.to( scene.gamePlay2D.display, {time = 500, y = display.contentCenterY-250, onComplete = function()
+				transition.to( scene.gamePlay2D.display, {time = 300, x = 0, y = 0, xScale = 1, yScale = 1} )
+			end } )
+			transition.to( scene.gamePlay2D.frame, {time = 500, y = display.contentCenterY-250, onComplete = function()
+				sceneGroup:removeFrameListener()
+				transition.to( scene.gamePlay2D.frame, {time = 300, x = 0, y = 0, xScale = 1, yScale = 1} )
+			end } )
+		end
+		return true
+	end
+
+	-- add/remove event listener to phone frame (reverse animation)
+	function sceneGroup:addFrameListener()
+		scene.gamePlay2D.frame:addEventListener( "touch", switchGamePlay )
+	end
+	function sceneGroup:removeFrameListener()
+		scene.gamePlay2D.frame:removeEventListener( "touch", switchGamePlay )
+	end
+
 	function sceneGroup:touch(e)
 		-- if drag to bottom, switch to gamePlay3D
 		if (e.target == self.rect) then
@@ -337,18 +359,32 @@ function scene:create( event )
 				-- switch to gamePlay3D
 				local yDrag = e.y - e.yStart
 				if (yDrag > 200) then
-					transition.to( scene.gamePlay2D.display, { time = 400, x = display.contentCenterX-230, xScale = .5, yScale = .5, onComplete = function()
-						transition.to( scene.gamePlay2D.display, {time = 700, x = display.contentCenterX-230, y = display.contentHeight-90} )
+					print( scene.gamePlay2D.display.x, scene.gamePlay2D.display.y )
+					transition.to( scene.gamePlay2D.display, { time = 300, x = display.contentCenterX-161, xScale = .5, yScale = .5, onComplete = function()
+						print( scene.gamePlay2D.display.x, scene.gamePlay2D.display.y )
+						transition.to( scene.gamePlay2D.display, {time = 600, x = display.contentCenterX-161, y = display.contentHeight-50} )
 					end} )
-					transition.to( scene.gamePlay2D.frame, { time = 400, x = display.contentCenterX-230, xScale = .5, yScale = .5, onComplete = function()
-						scene.listenerBox:toFront( )
-						transition.to( scene.gamePlay2D.frame, {time = 700, x = display.contentCenterX-230, y = display.contentHeight-90} )
+					transition.to( scene.gamePlay2D.frame, { time = 300, x = display.contentCenterX-161, xScale = .5, yScale = .5, onComplete = function()
+						-- listenerBox.alpha = .01
+						self.addFrameListener()
+						transition.to( scene.gamePlay2D.frame, {time = 600, x = display.contentCenterX-161, y = display.contentHeight-50} )
 					end} )
 				else
 					player1:jump()
 				end
 			end
 			return true
+		elseif (e.target == "scene.gamePlay2D.frame") then
+			if (e.phase == "ended") then
+				print( "touchatoucha" )
+				transition.to( scene.gamePlay2D.display, {time = 700, x = display.contentCenterX, y = display.contentCenterY, onComplete = function()
+					transition.to( scene.gamePlay2D.display, {time = 400, xScale = 1, yScale = 1} )
+				end } )
+				transition.to( scene.gamePlay2D.frame, {time = 700, x = display.contentCenterX, y = display.contentCenterY, onComplete = function()
+					self.removeFrameListener()
+					transition.to( scene.gamePlay2D.frame, {time = 400, xScale = 1, yScale = 1} )
+				end } )
+			end
 		end
 	end
 
@@ -379,6 +415,7 @@ function scene:create( event )
 	sceneGroup:insert( gamePlay3D)
 	sceneGroup:insert( gamePlay2D.display)
 	sceneGroup:insert( gamePlay2D.coins)
+	sceneGroup:insert( gamePlay2D.frame)
 
 end
 
