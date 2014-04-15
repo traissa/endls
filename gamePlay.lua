@@ -97,7 +97,7 @@ function scene:create( event )
 	local function switchGroup(i)
 		timer.performWithDelay( 1001, function()
 			print( "removing " .. tostring( i ))
-			if (person[i]) then
+			if (person[i]) and peopleClose then
 				peopleClose:insert(person[i])
 				for j=i,0,-1 do
 					if (person [j]) then
