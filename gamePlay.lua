@@ -50,7 +50,7 @@ function scene:create( event )
 	listenerBox:addEventListener( "touch", self )
 	listenerBox.alpha = .01
 
-
+	-- so fake 3D moving tiles
 	local spriteLocation = sprite[7].location
 	local sheetData =  sprite[7].sheetData
 	local mySheet = graphics.newImageSheet( spriteLocation, sheetData )
@@ -59,6 +59,22 @@ function scene:create( event )
 	animatedTiles.anchorX, animatedTiles.anchorY = .5, 0
 	animatedTiles.x, animatedTiles.y = display.contentCenterX, 720
 
+	local mySheet2 = graphics.newImageSheet( sprite[8].location, sprite[8].sheetData )
+	local sequenceData2 = sprite[8].sequenceData
+	local animatedTilesRight = display.newSprite( mySheet2, sequenceData2 )
+	animatedTilesRight.anchorX, animatedTilesRight.anchorY = .5, 0
+	animatedTilesRight.x, animatedTilesRight.y = display.contentCenterX, 720
+
+	local mySheet3 = graphics.newImageSheet( sprite[9].location, sprite[9].sheetData )
+	local sequenceData3 = sprite[9].sequenceData
+	local animatedTilesLeft = display.newSprite( mySheet3, sequenceData3 )
+	animatedTilesLeft.anchorX, animatedTilesLeft.anchorY = .5, 0
+	animatedTilesLeft.x, animatedTilesLeft.y = display.contentCenterX, 720
+
+	self.tiles = animatedTiles
+	self.tilesRight = animatedTilesRight
+	self.tilesLeft = animatedTilesLeft
+
 	local peopleFar = display.newGroup( )
 	self.peopleFar = peopleFar
 
@@ -66,6 +82,8 @@ function scene:create( event )
 	self.peopleClose = peopleClose
 
 	animatedTiles:play()
+	animatedTilesRight:play()
+	animatedTilesLeft:play()
 
 	local person = {}
 	self.personGroup = person
@@ -81,6 +99,7 @@ function scene:create( event )
 				if (person [j]) then
 					if (person[j].isLive) then
 						person[j]:toFront( )
+						person[j]:addEventListener( "personOnScreen", listenerFunction )
 					end
 				end
 			end
@@ -88,9 +107,14 @@ function scene:create( event )
 		end )
 	end
 
+	function listenerFunction(event)
+		print( tostring( event.position ) )
+	end
+
 	function removePerson(object)
 		timer.performWithDelay( 8000, function()
 			object.isLive = false
+			object:removeEventListener( "personOnScreen", listenerFunction )
 		end )
 	end
 
@@ -110,20 +134,28 @@ function scene:create( event )
 			removePerson(person[i])
 		end
 	end, -1 )
+	animatedTilesRight.alpha = 0
+	animatedTilesLeft.alpha = 0
+	-- animatedTiles.alpha = 0
 	
 	-- -- all display objects must be inserted into group
 	gamePlay3D:insert( farBackground )
 	gamePlay3D:insert( peopleFar)
 	gamePlay3D:insert( animatedTiles)
+	gamePlay3D:insert( animatedTilesRight)
+	gamePlay3D:insert( animatedTilesLeft)
 	gamePlay3D:insert( listenerBox)
 	gamePlay3D:insert( peopleClose)
 
 	-- gamePlay2D
 	local gamePlay2D = {}
-	gamePlay2D.coins = display.newGroup( )
-	gamePlay2D.display = display.newGroup( )
-	gamePlay2D.display:insert( gamePlay2D.coins )
 	self.gamePlay2D = gamePlay2D
+
+	gamePlay2D.coins = display.newGroup( )
+	gamePlay2D.frame = display.newGroup( )
+	gamePlay2D.display = display.newGroup( )
+	gamePlay2D.display.anchorX, gamePlay2D.display.anchorY = .5, .5
+	gamePlay2D.frame.anchorX, gamePlay2D.frame.anchorY = .5, .5
 
 	sceneGroup.animation = true
 	-- sceneGroup.coins = display.newGroup( )
@@ -283,7 +315,7 @@ function scene:create( event )
 		local rect = display.newRect( display.contentCenterX, display.contentCenterY, display.viewableContentWidth, display.contentHeight )
 		gamePlay2D.display:insert( rect )
 		self.rect = rect
-		rect.alpha = 0.5
+		rect.alpha = 0.01
 
 		rect:addEventListener( "touch", self )
 	end
@@ -302,11 +334,16 @@ function scene:create( event )
 		-- if drag to bottom, switch to gamePlay3D
 		if (e.target == self.rect) then
 			if (e.phase == "ended") then
-				print( "HAYOOOOOOOOOO" )
-
-				transition.to( scene.gamePlay2D.display, { time = 600, x = display.contentCenterX, xScale = .3, yScale = .3, onComplete = function()
-					transition.to( scene.gamePlay2D.display, {time = 600, x = display.contentCenterX, y = 600} )
+				transition.to( scene.gamePlay2D.display, { time = 400, x = display.contentCenterX-230, xScale = .5, yScale = .5, onComplete = function()
+					transition.to( scene.gamePlay2D.display, {time = 700, x = display.contentCenterX-230, y = display.contentHeight-90} )
 				end} )
+				transition.to( scene.gamePlay2D.frame, { time = 400, x = display.contentCenterX-230, xScale = .5, yScale = .5, onComplete = function()
+					transition.to( scene.gamePlay2D.frame, {time = 700, x = display.contentCenterX-230, y = display.contentHeight-90} )
+				end} )
+				timer.performWithDelay( 1500, function ()
+					print( scene.gamePlay2D.display.x, scene.gamePlay2D.display.y, scene.gamePlay2D.frame.width )
+					-- body
+				end )
 			end
 			if e.phase == "ended" then
 				player1:jump()
@@ -329,12 +366,18 @@ function scene:create( event )
 		timer.performWithDelay( 10, function ( )
 			composer.gotoScene( "finishGame" )
 		end )
-	end		
+	end
+
+	-- create screen masking
+	local screenMask = graphics.newMask( imageLocation.maskScreen, system.ResourceDirectory )
+	gamePlay2D.display:setMask( screenMask )
+	gamePlay2D.display.maskX, gamePlay2D.display.maskY = display.contentCenterX, display.contentCenterY + 7
+	gamePlay2D.display.maskScaleX, gamePlay2D.display.maskScaleY = 1.1, 1.1
 
 	-- create iPhone frame
-	local phoneFrame = display.newImageRect( gamePlay2D.display, imageLocation.iPhone, 840, 1680 )
+	local phoneFrame = display.newImageRect( gamePlay2D.frame, imageLocation.iPhone, 840, 1680 )
 	phoneFrame.anchorX, phoneFrame.anchorY = .5, .5
-	phoneFrame.x, phoneFrame.y = display.contentCenterX, display.contentCenterY + 7
+	phoneFrame.x, phoneFrame.y = display.contentCenterX, display.contentCenterY + 9
 	phoneFrame.xScale, phoneFrame.yScale = 1.1, 1.1
 	phoneFrame:toFront( )
 
@@ -357,16 +400,29 @@ function scene:touch( event )
         elseif event.phase == "ended" then
         	-- "move" to right/left by tapping
 	        local xPos
-	        print( event.x )
+	        local slideTime = 500
 
 	        if (event.x > 320 ) then
-	        	xPos = self.markX - display.contentWidth/3
+	        	xPos = self.markX - display.contentWidth/2
+		        self.tilesRight.alpha = 1
+		        self.tiles.alpha = 0
+		        timer.performWithDelay( slideTime, function()
+		        	self.tiles.alpha = 1
+		        	self.tilesRight.alpha = 0
+		        end )
 	        else
-	        	xPos = self.markX + display.contentWidth/3
+	        	xPos = self.markX + display.contentWidth/2
+	        	self.tilesLeft.alpha = 1
+		        self.tiles.alpha = 0
+		        timer.performWithDelay( slideTime, function()
+		        	self.tiles.alpha = 1
+		        	self.tilesLeft.alpha = 0
+		        end )
 	        end
 
-	        transition.to( self.peopleClose, {time = 300, x = xPos, transition = easing.inOutSine} )
-	        transition.to( self.peopleFar, {time = 300, x = xPos, transition = easing.inOutSine} )
+
+	        transition.to( self.peopleClose, {time = slideTime, x = xPos, transition = easing.inOutSine} )
+	        transition.to( self.peopleFar, {time = slideTime, x = xPos, transition = easing.inOutSine} )
         	-- switch to gamePlay2D
 	        -- local yDrag = event.y - event.yStart
 	        -- -- print( yDrag )

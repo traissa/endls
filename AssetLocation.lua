@@ -79,12 +79,33 @@ sprite[7].name = "tiles"
 sprite[7].location = "Asset/Bg3DGroundSprite.png"
 sprite[7].sheetData = {	numFrames = 4*4,
 						sheetContentWidth = 2560,
-						sheetContentHeight = 1656,
+						sheetContentHeight = 1660,
 						width = 2560/4,
-						height = 1656/4,
+						height = 1660/4,
 						}
 sprite[7].sequenceData = {name = "tiles", start = 1, count = 16, time = 600, loopCount = 0}
 
+sprite[8] = {}
+sprite[8].name = "tilesRight"
+sprite[8].location = "Asset/Bg3DGroundSpriteRight.png"
+sprite[8].sheetData = {	numFrames = 4*4,
+						sheetContentWidth = 2560,
+						sheetContentHeight = 1660,
+						width = 2560/4,
+						height = 1660/4,
+						}
+sprite[8].sequenceData = {name = "tilesRight", start = 1, count = 16, time = 600, loopCount = 0}
+
+sprite[9] = {}
+sprite[9].name = "tilesLeft"
+sprite[9].location = "Asset/Bg3DGroundSpriteLeft.png"
+sprite[9].sheetData = {	numFrames = 4*4,
+						sheetContentWidth = 2560,
+						sheetContentHeight = 1660,
+						width = 2560/4,
+						height = 1660/4,
+						}
+sprite[9].sequenceData = {name = "tilesLeft", start = 1, count = 16, time = 600, loopCount = 0}
 
 imageLocation = {}
 
@@ -101,6 +122,8 @@ imageLocation.background3D = "Asset/Bg3DMatte.png"
 imageLocation.scoreBoard = "Asset/BrdScore.png"
 
 imageLocation.iPhone = "Asset/Obj3DiPhone.png"
+
+imageLocation.maskScreen = "Asset/Obj3DiPhoneMask.png"
 
 
 imageLocation.button = {

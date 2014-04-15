@@ -30,14 +30,15 @@ function opponent:new( status, touchGroup )
 		playerWalk:toBack( ) 
 
 		local initx = touchGroup.x
-		transition.to( playerWalk, {time = 1000, xScale = .45, yScale = .45, y = display.contentHeight - 410, onComplete = function()
+		transition.to( playerWalk, {time = 1000, xScale = .3, yScale = .3, y = display.contentHeight - 410, onComplete = function()
 			-- timer.performWithDelay( 20, function() end )
-			transition.to( playerWalk, {time = 6000, xScale = 3, yScale = 3, y = display.contentHeight + 1000, transition = easing.inSine , onComplete = function() 
+			transition.to( playerWalk, {time = 7000, xScale = 5, yScale = 5, y = display.contentHeight + 1870, transition = easing.inSine , onComplete = function() 
 				if (playerWalk) then
 					playerWalk:removeSelf( )
 					local finalx = x + (touchGroup.x - initx)
-					print( "final position " .. tostring( finalx ) )
+					-- print( "final position " .. tostring( finalx ) )
 					playerWalk = nil
+					newPerson:dispatchEvent( {name = "personOnScreen", position = finalx} )
 				end
 			end} )
 		end} )
