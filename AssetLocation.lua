@@ -61,7 +61,7 @@ sprite[5].sheetData = {	numFrames = 6*1,
 						width = 3840/6,
 						height = 1280/1,
 						}
-sprite[5].sequenceData = {name = "crack", start = 1, count = 6, time = 200, loopCount = 1}
+sprite[5].sequenceData = {name = "crack", start = 1, count = 6, time = 800, loopCount = 1}
 
 sprite[6] = {}
 sprite[6].name = "blood"
@@ -72,7 +72,7 @@ sprite[6].sheetData = {	numFrames = 6*1,
 						width = 3840/6,
 						height = 1280/1,
 						}
-sprite[6].sequenceData = {name = "blood", start = 1, count = 6, time = 200, loopCount = 1}
+sprite[6].sequenceData = {name = "blood", start = 1, count = 6, time = 800, loopCount = 1}
 
 sprite[7] = {}
 sprite[7].name = "tiles"

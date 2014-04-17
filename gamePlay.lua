@@ -30,8 +30,6 @@ function scene:create( event )
 	-- e.g. add display objects to 'sceneGroup', add touch listeners, etc.
 	local sceneGroup = self.view
 
-
-
 	-- GAMEPLAY 3D
 	local gamePlay3D = display.newGroup( )
 	self.gamePlay3D = gamePlay3D
@@ -92,12 +90,13 @@ function scene:create( event )
 
 	local function listenerFunction(event)
 		print( tostring( event.position ) )
+		print( self.gamePlay )
 	end
 
 	local function switchGroup(i)
 		timer.performWithDelay( 1001, function()
 			print( "removing " .. tostring( i ))
-			if (person[i]) and peopleClose then
+			if (person[i]) and peopleClose and sceneGroup.animation then
 				peopleClose:insert(person[i])
 				for j=i,0,-1 do
 					if (person [j]) then
@@ -333,10 +332,12 @@ function scene:create( event )
 	-- reverse animation
 	local function switchGamePlay(event)
 		if (event.phase == "ended") then
-			transition.to( scene.gamePlay2D.display, {time = 500, y = display.contentCenterY-250, onComplete = function()
+			transition.pause("swingPhone")
+			self.gamePlay = "gamePlay2D"
+			transition.to( scene.gamePlay2D.display, {time = 500, rotation = 0, y = display.contentCenterY-250, onComplete = function()
 				transition.to( scene.gamePlay2D.display, {time = 300, x = 0, y = 0, xScale = 1, yScale = 1} )
 			end } )
-			transition.to( scene.gamePlay2D.frame, {time = 500, y = display.contentCenterY-250, onComplete = function()
+			transition.to( scene.gamePlay2D.frame, {time = 500, rotation = 0, y = display.contentCenterY-250, onComplete = function()
 				sceneGroup:removeFrameListener()
 				transition.to( scene.gamePlay2D.frame, {time = 300, x = 0, y = 0, xScale = 1, yScale = 1} )
 			end } )
@@ -359,6 +360,7 @@ function scene:create( event )
 				-- switch to gamePlay3D
 				local yDrag = e.y - e.yStart
 				if (yDrag > 200) then
+					scene.gamePlay = "gamePlay3D"
 					print( scene.gamePlay2D.display.x, scene.gamePlay2D.display.y )
 					transition.to( scene.gamePlay2D.display, { time = 300, x = display.contentCenterX-161, xScale = .5, yScale = .5, onComplete = function()
 						print( scene.gamePlay2D.display.x, scene.gamePlay2D.display.y )
@@ -367,7 +369,9 @@ function scene:create( event )
 					transition.to( scene.gamePlay2D.frame, { time = 300, x = display.contentCenterX-161, xScale = .5, yScale = .5, onComplete = function()
 						-- listenerBox.alpha = .01
 						self.addFrameListener()
-						transition.to( scene.gamePlay2D.frame, {time = 600, x = display.contentCenterX-161, y = display.contentHeight-50} )
+						transition.to( scene.gamePlay2D.frame, {time = 600, x = display.contentCenterX-161, y = display.contentHeight-50, onComplete = function()
+							scene.movePhone()
+						end} )
 					end} )
 				else
 					player1:jump()
@@ -375,16 +379,16 @@ function scene:create( event )
 			end
 			return true
 		elseif (e.target == "scene.gamePlay2D.frame") then
-			if (e.phase == "ended") then
-				print( "touchatoucha" )
-				transition.to( scene.gamePlay2D.display, {time = 700, x = display.contentCenterX, y = display.contentCenterY, onComplete = function()
-					transition.to( scene.gamePlay2D.display, {time = 400, xScale = 1, yScale = 1} )
-				end } )
-				transition.to( scene.gamePlay2D.frame, {time = 700, x = display.contentCenterX, y = display.contentCenterY, onComplete = function()
-					self.removeFrameListener()
-					transition.to( scene.gamePlay2D.frame, {time = 400, xScale = 1, yScale = 1} )
-				end } )
-			end
+			-- if (e.phase == "ended") then
+			-- 	print( "touchatoucha" )
+			-- 	transition.to( scene.gamePlay2D.display, {time = 700, x = display.contentCenterX, y = display.contentCenterY, onComplete = function()
+			-- 		transition.to( scene.gamePlay2D.display, {time = 400, xScale = 1, yScale = 1} )
+			-- 	end } )
+			-- 	transition.to( scene.gamePlay2D.frame, {time = 700, x = display.contentCenterX, y = display.contentCenterY, onComplete = function()
+			-- 		self.removeFrameListener()
+			-- 		transition.to( scene.gamePlay2D.frame, {time = 400, xScale = 1, yScale = 1} )
+			-- 	end } )
+			-- end
 		end
 	end
 
@@ -420,6 +424,8 @@ function scene:create( event )
 end
 
 function scene:touch( event )
+	local sceneGroup = self.view
+
 	if (event.target == self.listenerBox) then
 	    if event.phase == "began" then
 
@@ -465,6 +471,21 @@ function scene:touch( event )
 	end
 end
 
+function scene:movePhone()
+	local sceneGroup = scene.view
+	print( "moving" )
+
+	transition.to( scene.gamePlay2D.display, {tag = "swingPhone",rotation = 32, onComplete = function()
+		transition.to( scene.gamePlay2D.display, {tag = "swingPhone", rotation = -32} )
+	end} )
+	transition.to( scene.gamePlay2D.frame, {tag = "swingPhone",rotation = 32, onComplete = function()
+		transition.to( scene.gamePlay2D.frame, {tag = "swingPhone",rotation = -32, onComplete = function()
+			if (scene.gamePlay == "gamePlay3D") then
+				scene.movePhone()
+			end
+		end} )
+	end} )
+end
 
 function scene:show( event )
 	local sceneGroup = self.view
@@ -480,6 +501,7 @@ function scene:show( event )
 		-- 
 		-- INSERT code here to make the scene come alive
 		-- e.g. start timers, begin animation, play audio, etc.
+		self.gamePlay = "gamePlay2D"
 		physics.start( true )
 		physics.setGravity( 0, 30 )
 		-- physics.setDrawMode( "hybrid" )
