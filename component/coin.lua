@@ -34,6 +34,9 @@ function coinRed:new( x, y)
 	end
 
 	function newCoin:turnTranslationOff()
+		-- if (coin) then
+		-- 	coin:pause( )
+		-- end
 		onTranslation = false
 		Runtime:removeEventListener( "turnTranslationOff", self )
 	end
@@ -113,6 +116,9 @@ function coinYellow:new( x, y)
 	end
 
 	function newCoin:turnTranslationOff()
+		-- if (coin) then
+		-- 	coin:pause( )
+		-- end
 		onTranslation = false
 		Runtime:removeEventListener( "turnTranslationOff", self )
 	end

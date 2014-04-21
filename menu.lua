@@ -15,13 +15,16 @@ function scene:create( event )
 	local sceneGroup = self.view
 
 	function sceneGroup:init( )
-	 	local background = display.newImage( imageLocation.background2D, display.contentCenterX, display.contentCenterY )
+	 	local background  = display.newImage( imageLocation.background2D )
+	 	background.anchorX, background.anchorY = .5, 1
+		background.x, background.y = display.contentCenterX, display.contentHeight
 		self:insert( background)
+
 
 		local floor = display.newImage( imageLocation.floor )
 		floor.x, floor.y = 0, display.contentHeight 
 		floor.anchorX, floor.anchorY = 0,1
-		self:insert( floor )   
+		self:insert( floor )
 
 		local playerComponent = require "component.player"
 

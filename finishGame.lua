@@ -31,7 +31,15 @@ function scene:create( event )
 		local firedTextx = display.newImage(location , display.contentCenterX, display.contentHeight*(145/679) )
 		self:insert( firedTextx ); firedTextx.anchorY = 0
 
-		local description = "red coin is a trap" 
+		local description 
+
+		if (event.params.state == "redCollision" ) then
+			description = "red coin is a trap" 
+		elseif (event.params.state == "crushed2D") then
+			description = "mind the pedestrians"
+		elseif (event.params.state == "crushed3D") then
+			description = "you're crushed"
+		end
 		local textDesc = display.newText( self, description, display.contentCenterX, display.contentHeight*(195/679),  "Half Bold Pixel-7", 40  )
 		textDesc.anchorY = 0
 		
