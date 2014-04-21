@@ -42,15 +42,16 @@ function player:new( status , parentGroup )
 
 	function newPlayer:jump( )
 		-- playerWalk:applyForce( 0, -2500*2, playerWalk.x,playerWalk.y )
-		playerWalk:setLinearVelocity( 0,-800 )
+		playerWalk:setLinearVelocity( 0,-900 )
 		timer.performWithDelay( 460, function ()
 			-- playerWalk:a
-			playerWalk:setLinearVelocity( 0, 100 )
+			playerWalk:setLinearVelocity( 0, 150 )
 		end )
 	end
 
 	function newPlayer:addBody( )
-		local shapePlayer  = {-17,-67,  18,-67,  18,-6,  53,-6,  56,84,  -52,84,  -52,-6,  -17,-6}
+		-- local shapePlayer  = {-17,-67,  18,-67,  18,-6,  53,-6,  56,84,  -52,84,  -52,-6,  -17,-6}
+		local shapePlayer = {-15,-40, 15,-40, 15,0, 37,0, 37,83, -37,83, -37,0, -15,0}
 		physics.addBody( playerWalk, {density=1, friction=0, bounce=0, shape = shapePlayer } )
 		playerWalk.isAwake = true
 	end
@@ -104,10 +105,17 @@ function player:new( status , parentGroup )
 		playerWalk.isSensor = false
 
 
-		-- if (event.state == "redCollision") then
-		-- 	playerWalk.isFixedRotation = false
-		-- 	transition.to( playerWalk, {delay = 20, rotation = -90} ) 
-		-- end
+		if (event.state == "redCollision") then
+			-- playerWalk.isFixedRotation = false
+			physics.setGravity( 0, 6 )
+			transition.to( playerWalk, {delay = 100, rotation = -90, onComplete = function()
+				physics.setGravity( 0, 30 )
+			end} )
+		else
+			playerWalk:setLinearVelocity( 0, 0 )
+			physics.setGravity( 0, 0 )
+			playerWalk:setLinearVelocity( 0, 0 )
+		end
 	end
 
 	function newPlayer:alwaysAwake( )

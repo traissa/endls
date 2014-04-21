@@ -20,48 +20,47 @@ local scoreTxt
 
 function scene:create( event )
 
+
 	local sceneGroup = self.view
 
 	function sceneGroup:init( )
 		local background = display.newRect( display.contentCenterX, display.contentCenterY, display.contentWidth , display.contentHeight )
 		background:setFillColor( 255/255,55/255,55/255 )
-		self:insert( background)
+		self.background = background
+		self:insert( background )
+
+		local frontDisplay = display.newGroup( )
+		sceneGroup.frontDisplay = frontDisplay
+		self:insert( frontDisplay )
 
 		local location = imageLocation.text.fired
 		local firedTextx = display.newImage(location , display.contentCenterX, display.contentHeight*(145/679) )
-		self:insert( firedTextx ); firedTextx.anchorY = 0
+		frontDisplay:insert( firedTextx ); firedTextx.anchorY = 0
 
-		local description 
-
-		if (event.params.state == "redCollision" ) then
-			description = "red coin is a trap" 
-		elseif (event.params.state == "crushed2D") then
-			description = "mind the pedestrians"
-		elseif (event.params.state == "crushed3D") then
-			description = "you're crushed"
-		end
-		local textDesc = display.newText( self, description, display.contentCenterX, display.contentHeight*(195/679),  "Half Bold Pixel-7", 40  )
+		local textDesc = display.newText( frontDisplay, "", display.contentCenterX, display.contentHeight*(195/679),  "Half Bold Pixel-7", 40  )
 		textDesc.anchorY = 0
+		self.textDesc = textDesc
 		
 		local scoreBoard = display.newImage( imageLocation.scoreBoard, display.contentCenterX, display.contentHeight*(244/679) )
-		self:insert( scoreBoard)
+		frontDisplay:insert( scoreBoard)
 		scoreBoard.anchorY = 0
 
 		local okayBtn = display.newImage( imageLocation.button.okay , display.contentWidth*.25, display.contentHeight*(471/679) )
 		okayBtn.name  = "okayBtn"
-		self:insert(okayBtn)
+		frontDisplay:insert(okayBtn)
 		okayBtn:addEventListener( "touch", self )
 		okayBtn.anchorY = 0
 
 		local shareBtn = display.newImage( imageLocation.button.share, display.contentWidth*.75, display.contentHeight*(471/679) )
 		shareBtn.name  = "shareBtn"
-		self:insert( shareBtn )
+		frontDisplay:insert( shareBtn )
 		shareBtn:addEventListener( "touch", self )
 		shareBtn.anchorY = 0
 
-		scoreTxt = display.newText( self, "", display.contentWidth*(92/321) , display.contentHeight*(300/567),  "Visitor TT1 BRK", 120  )
+		local scoreTxt = display.newText( frontDisplay, "0", display.contentWidth*(92/321) , display.contentHeight*(300/567),  "Visitor TT1 BRK", 120  )
+		self.scoreTxt = scoreTxt
 
-		local highSCoreTxt = display.newText( self, tostring(settings.highScore), display.contentWidth*(235/321) , display.contentHeight*(300/567),  "Visitor TT1 BRK", 120  )
+		local highSCoreTxt = display.newText( frontDisplay, tostring(settings.highScore), display.contentWidth*(235/321) , display.contentHeight*(300/567),  "Visitor TT1 BRK", 120  )
 	end
 
 	function sceneGroup:touch(e)
@@ -98,12 +97,28 @@ function scene:show( event )
 	local phase = event.phase
 	
 	if phase == "will" then
+		if (event.params.state == "redCollision" ) then
+			sceneGroup.textDesc.text = "red coin is a trap" 
+		elseif (event.params.state == "crushed2D") then
+			sceneGroup.textDesc.text = "mind the pedestrians"
+		elseif (event.params.state == "crushed3D") then
+			sceneGroup.textDesc.text = "you're crushed"
+		end
+
+		sceneGroup.scoreTxt.text = "0"
+
+		sceneGroup.frontDisplay.alpha = 0
+
+		transition.to( sceneGroup.frontDisplay, {alpha = 1, onComplete = function()
+		  	-- sceneGroup:insert( self.background )
+		end} )
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
+
 		local currentTxt = 0
 		local function scrolltext( )
 			if currentTxt <= settings.currentScore then
-				scoreTxt.text = tostring(currentTxt)
+				sceneGroup.scoreTxt.text = tostring(currentTxt)
 				currentTxt = currentTxt + 1
 				timer.performWithDelay( 100, scrolltext )
 			end

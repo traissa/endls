@@ -37,6 +37,10 @@ function scene:create( event )
 		-- local title = display.newText( self, "endless", display.contentCenterX , .3* display.contentHeight , "Visitor TT1 BRK" , 120 )
 		-- title:setFillColor(  119/255, 86/255,41/255 )
 
+		local frontDisplay = display.newGroup( )
+		self.frontDisplay = frontDisplay
+		self:insert( frontDisplay )
+
 		local title = display.newImage( imageLocation.title, display.contentCenterX, display.contentHeight*(231/679) )
 		self:insert(title)
 
@@ -49,6 +53,10 @@ function scene:create( event )
 		rateBtn.name  = "rateBtn"
 		self:insert( rateBtn )
 		rateBtn:addEventListener( "touch", self )
+
+		frontDisplay:insert( title )
+		frontDisplay:insert( playBtn )
+		frontDisplay:insert( rateBtn )
 	end
 
 	function sceneGroup:touch (e )
@@ -56,8 +64,9 @@ function scene:create( event )
 			local callback
 			if e.target.name == "playBtn" then
 				function callback( )
-					-- composer.gotoScene( "gamePlay3D" )
-					composer.gotoScene( "gamePlay")
+					-- transition.to( self.frontDisplay, {alpha = .5, y = -50, onComplete = function()
+						composer.gotoScene( "gamePlay")
+					-- end} )
 				end
 			elseif e.target.name == "rateBtn" then
 				function callback( )
@@ -98,10 +107,10 @@ function scene:show( event )
 		-- physics.start( )
 		-- physics.setGravity( 0,0 )
 		-- local player1 = player:new( "start")
+		transition.to( self.frontDisplay, {alpha = 1, y = 600} )
 
-	
+		
 	elseif phase == "did" then
-
 		
 		-- Called when the scene is now on screen
 		-- 
@@ -135,6 +144,8 @@ function scene:hide( event )
 			settings.currentScore = 0
 			saveTable("settings.json", system.DocumentsDirectory, settings)
 		end
+
+		-- composer.removeScene("gamePlay")
 
 	end	
 end

@@ -90,10 +90,8 @@ function scene:create( event )
 	self.personGroup = person
 	local i = 0
 
-	-- receive final position of closePeople, determining the game over
+	-- receive final position of closePeople, if the animation bumps into screen game is over
 	local function listenerFunction(event)
-		-- print( tostring( event.position ) )
-		print("ALERT EVENT POSITION " .. tostring( event.position ) )
 		if ((event.position > -50) and (event.position < display.contentWidth + 50 )) then
 			if (sceneGroup.animation) then
 				if (self.gamePlay == "gamePlay2D") then
@@ -134,7 +132,7 @@ function scene:create( event )
 
 	timer.performWithDelay( 3500, function()
 		local randomNumber = math.random( )
-		if (randomNumber > .35) then
+		if (randomNumber > .65) then
 			if (sceneGroup.animation) then
 				i = i+1
 				person[i] = opponent:new(true, peopleClose, i)
@@ -410,7 +408,6 @@ function scene:create( event )
 	end
 
 	function sceneGroup:gameOver( )
-		print( "DISPATCH GAMEOVER" )
 		if (sceneGroup.animation) then
 			self:dispatchEvent( {name = "gameOver", state = "redCollision"} )
 		end
@@ -559,26 +556,24 @@ function scene:gameOver(event)
 	local sceneGroup = self.view
 	local state = event.state
 	print( "blabalas " .. tostring(event.state) )
+	sceneGroup.rect:removeEventListener( "touch", sceneGroup )
+	self.listenerBox:removeEventListener( "touch", self )
 
 	animation = false
 	sceneGroup.animation = false
 	Runtime:dispatchEvent( {name = "turnTranslationOff", state = state } )
-	sceneGroup.rect:removeEventListener( "touch", self )
 
 
 	local function toFinishGame(options)
 		composer.gotoScene("finishGame", options)
 	end
 
-	local function gameOverAnimation(sequence)
+	-- local function gameOverAnimation(sequence)
+	-- end
 
-
-
-	end
-
-
+	-- composer scene transition options
 	local options = {
-		effect = "crossFade",
+		-- effect = "crossFade",
 		time = 1200,
 		params = {
 	        state = state
@@ -587,12 +582,13 @@ function scene:gameOver(event)
 
 	if (state == "redCollision") then
 		-- blood
-		-- transition.to( scene.player, {rotation = -90} )
-		scene.splatter.isVisible = true
-		scene.splatter:toFront( )
-		scene.splatter:play()
-		timer.performWithDelay( 1200, function ()
-			toFinishGame(options)
+		timer.performWithDelay( 600, function()
+			scene.splatter.isVisible = true
+			scene.splatter:toFront( )
+			scene.splatter:play()
+			timer.performWithDelay( 1200, function ()
+				toFinishGame(options)
+			end )
 		end )
 	elseif (state == "crushed2D") then
 		-- animation 2D crack, blood
@@ -600,13 +596,15 @@ function scene:gameOver(event)
 		scene.screenCrack:toFront( )
 		scene.tiles2D.isVisible = true
 		scene.screenCrack:play()
-		transition.to( scene.gamePlay2D.display, {delay = 800, xScale = .5, yScale = .5} )
-		transition.to( scene.gamePlay2D.frame, {delay = 800, xScale = .5, yScale = .5, onComplete = function ()
-			scene.splatter.isVisible = true
-			scene.splatter:toFront( )
-			scene.splatter:play()
-			timer.performWithDelay( 1200, function ()
-				toFinishGame(options)
+		transition.to( scene.gamePlay2D.display, {delay = 900, time = 800, rotation = 15, xScale = .45, yScale = .45} )
+		transition.to( scene.gamePlay2D.frame, {delay = 900, time = 800, rotation = 15, xScale = .45, yScale = .45, onComplete = function ()
+			timer.performWithDelay( 300, function()
+				scene.splatter.isVisible = true
+				scene.splatter:toFront( )
+				scene.splatter:play()
+				timer.performWithDelay( 1200, function ()
+					toFinishGame(options)
+				end )
 			end )
 		end} )
 	elseif (state == "crushed3D") then
@@ -614,16 +612,16 @@ function scene:gameOver(event)
 		scene.tiles:pause( )
 		scene.tilesRight:pause()
 		scene.tilesLeft:pause()
-		transition.to( scene.gamePlay2D.frame, {time = 500, y = display.contentHeight-400, onComplete = function()
-			transition.to( scene.gamePlay2D.frame, {time = 1000, y = display.contentHeight + 450, x = 140, rotation = 90, transition = easing.inOutSine} )
+		transition.to( scene.gamePlay2D.frame, {time = 400, rotation = 12, y = display.contentHeight-400, onComplete = function()
+			transition.to( scene.gamePlay2D.frame, {time = 1000, y = display.contentHeight + 450, x = 140, rotation = 70, transition = easing.inOutSine} )
 		end} )
-		transition.to( scene.gamePlay2D.display, {time = 500, y = display.contentHeight-400, onComplete = function()
+		transition.to( scene.gamePlay2D.display, {time = 400, rotation = 12, y = display.contentHeight-400, onComplete = function()
 			scene.splatter.isVisible = true
 			scene.splatter:play()
 			timer.performWithDelay( 1500, function ()
 				toFinishGame(options)
 			end )
-			transition.to( scene.gamePlay2D.display, {time = 1000, y = display.contentHeight + 450, x = 140, rotation = 90, transition = easing.inOutSine} )
+			transition.to( scene.gamePlay2D.display, {time = 1000, y = display.contentHeight + 450, x = 140, rotation = 70, transition = easing.inOutSine} )
 		end} )
 	end
 end
@@ -637,6 +635,9 @@ function scene:show( event )
 		animation = true
 		sceneGroup.animation = true
 
+		self.player.alpha = 0
+		transition.to( self.player, {time = 300, alpha = 1} )
+
 	elseif phase == "did" then
 		-- Called when the scene is now on screen
 		-- 
@@ -645,7 +646,7 @@ function scene:show( event )
 		self.gamePlay = "gamePlay2D"
 		physics.start( true )
 		physics.setGravity( 0, 30 )
-		physics.setDrawMode( "hybrid" )
+		-- physics.setDrawMode( "hybrid" )
 		Runtime:dispatchEvent( {name = "score", value = 0} )
 		physics.start()
 	end

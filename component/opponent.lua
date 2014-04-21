@@ -24,19 +24,16 @@ function opponent:new( status, touchGroup, number )
 		local playerWalk = display.newSprite( mySheet, sequenceData )
 		playerWalk.name = "opponent"
 		playerWalk.x , playerWalk.y = x,y
-		-- playerWalk.y = y
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
 		playerWalk.xScale, playerWalk.yScale = .3, .3
 		playerWalk:toBack( )
 
 		local animation = true
-		-- local function setAnimation()
-		-- end
 
 		function setAnimation(event)
 			if (playerWalk) then
 				animation = false
-				print( "PAUSING PLAYERWALK " .. tostring( number ) )
+				-- print( "PAUSING PLAYERWALK " .. tostring( number ) )
 				transition.pause( "opponentWalk")
 				if (event.state == "crushed3D") then
 					playerWalk:pause( )
@@ -50,14 +47,14 @@ function opponent:new( status, touchGroup, number )
 		transition.to( playerWalk, {tag = "opponentWalk",time = 1000, xScale = .3, yScale = .3, y = display.contentHeight - 410, onComplete = function()
 			-- timer.performWithDelay( 20, function() end )
 			if (animation) then
-				transition.to( playerWalk, {tag = "opponentWalk",time = 7000, xScale = 3, yScale = 3, y = display.contentHeight + 1260, transition = easing.inSine , onComplete = function()
+				transition.to( playerWalk, {tag = "opponentWalk",time = 7000, xScale = 3, yScale = 3, y = display.contentHeight + 1260, transition = easing.inCubic , onComplete = function()
 					if (animation) then
-						print( "DISPATCHING FINAL LOCATION BE CAREFUL " .. tostring( touchGroup.x - initx ) )
+						-- print( "DISPATCHING FINAL LOCATION BE CAREFUL " .. tostring( touchGroup.x - initx ) )
 						local finalx = x + (touchGroup.x - initx)
 						newPerson:dispatchEvent( {name = "personOnScreen", position = finalx} )
 						Runtime:removeEventListener( "turnTranslationOff", setAnimation )
 						if (playerWalk) then
-							print( "removing person number " .. tostring( number ) )
+							-- print( "removing person number " .. tostring( number ) )
 							playerWalk:removeSelf( )
 							-- print( "final position " .. tostring( finalx ) )
 							playerWalk = nil

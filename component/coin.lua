@@ -16,6 +16,7 @@ function coinRed:new( x, y)
 		local sequenceData = sprite[3].sequenceData
 
 		coin = display.newSprite( mySheet, sequenceData )
+		self.coin = coin
 		coin.name = "coin"
 		coin.x , coin.y = x,y
 
@@ -34,11 +35,13 @@ function coinRed:new( x, y)
 	end
 
 	function newCoin:turnTranslationOff()
-		-- if (coin) then
-		-- 	coin:pause( )
-		-- end
-		onTranslation = false
 		Runtime:removeEventListener( "turnTranslationOff", self )
+		if (onTranslation) then
+			if (self.coin) then
+				self.coin:pause( )
+			end
+			onTranslation = false
+		end
 	end
 
 	function newCoin:collision(e)
@@ -46,7 +49,7 @@ function coinRed:new( x, y)
 			print( "collision with coin!!!!!!!!!!!!! REDD" )
 			if e.other.name == "player" then
 				self:remove()
-				Runtime:dispatchEvent( {name = "score", value = -10000} )
+				Runtime:dispatchEvent( {name = "score", value = -100000} )
 			end 
 		end
 		-- print(event)
@@ -98,6 +101,7 @@ function coinYellow:new( x, y)
 		local sequenceData = sprite[4].sequenceData
 
 		coin = display.newSprite( mySheet, sequenceData )
+		self.coin = coin
 		coin.name = "coin"
 		coin.x , coin.y = x,y
 
@@ -116,11 +120,13 @@ function coinYellow:new( x, y)
 	end
 
 	function newCoin:turnTranslationOff()
-		-- if (coin) then
-		-- 	coin:pause( )
-		-- end
-		onTranslation = false
 		Runtime:removeEventListener( "turnTranslationOff", self )
+		if (onTranslation) then
+			if (self.coin) then
+				self.coin:pause( )
+			end
+			onTranslation = false
+		end
 	end
 
 	function newCoin:collision(e)
