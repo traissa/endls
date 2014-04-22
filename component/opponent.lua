@@ -33,7 +33,7 @@ function opponent:new( status, touchGroup, number )
 		function setAnimation(event)
 			if (playerWalk) then
 				animation = false
-				-- print( "PAUSING PLAYERWALK " .. tostring( number ) )
+				print( "PAUSING PLAYERWALK " .. tostring( number ) )
 				transition.pause( "opponentWalk")
 				if (event.state == "crushed3D") then
 					playerWalk:pause( )
@@ -49,6 +49,7 @@ function opponent:new( status, touchGroup, number )
 			if (animation) then
 				transition.to( playerWalk, {tag = "opponentWalk",time = 7000, xScale = 3, yScale = 3, y = display.contentHeight + 1260, transition = easing.inCubic , onComplete = function()
 					if (animation) then
+						print( "blbbblab" .. tostring( number ) )
 						-- print( "DISPATCHING FINAL LOCATION BE CAREFUL " .. tostring( touchGroup.x - initx ) )
 						local finalx = x + (touchGroup.x - initx)
 						newPerson:dispatchEvent( {name = "personOnScreen", position = finalx} )

@@ -8,6 +8,7 @@ function player:new( status , parentGroup )
 	local x, y = display.contentCenterX -170, display.contentHeight - 165
 	local newPlayer = display.newGroup( )
 	local playerWalk
+	local animation = true
 	-- local rotation = 0
 
 	if parentGroup then parentGroup:insert(newPlayer) end
@@ -28,7 +29,6 @@ function player:new( status , parentGroup )
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
 		playerWalk.xScale, playerWalk.yScale = .75, .75
 		-- player.rotation = rotation
-		playerWalk.isFixedRotation = true
 		playerWalk.isSensor = true
 
 		self:insert( playerWalk )
@@ -42,18 +42,22 @@ function player:new( status , parentGroup )
 
 	function newPlayer:jump( )
 		-- playerWalk:applyForce( 0, -2500*2, playerWalk.x,playerWalk.y )
-		playerWalk:setLinearVelocity( 0,-900 )
-		timer.performWithDelay( 460, function ()
-			-- playerWalk:a
-			playerWalk:setLinearVelocity( 0, 150 )
+		playerWalk:setLinearVelocity( 0, 0 )
+		playerWalk:applyForce( 0, -1000, playerWalk.x, playerWalk.y )
+		playerWalk:pause( )
+		timer.performWithDelay( 300, function()
+			if (animation) then
+				playerWalk:play( )
+			end
 		end )
 	end
 
 	function newPlayer:addBody( )
 		-- local shapePlayer  = {-17,-67,  18,-67,  18,-6,  53,-6,  56,84,  -52,84,  -52,-6,  -17,-6}
 		local shapePlayer = {-15,-40, 15,-40, 15,0, 37,0, 37,83, -37,83, -37,0, -15,0}
-		physics.addBody( playerWalk, {density=1, friction=0, bounce=0, shape = shapePlayer } )
+		physics.addBody( playerWalk, {density=.1, friction=1, bounce=.1, shape = shapePlayer } )
 		playerWalk.isAwake = true
+		playerWalk.isFixedRotation = true
 	end
 
 
@@ -97,25 +101,29 @@ function player:new( status , parentGroup )
 
 	function newPlayer:turnTranslationOff(event)
 		Runtime:removeEventListener( "turnTranslationOff", self )
+
+		animation = false
 		self.boundary1:removeSelf( )
 		self.boundary2:removeSelf( )
 		self.boundary1, self.boundary2 = nil, nil
-		playerWalk:pause( )
 		playerWalk.isAwake = false
 		playerWalk.isSensor = false
 
+		-- timer.performWithDelay( 275, function()
+			playerWalk:pause( )
+		-- end )
 
-		if (event.state == "redCollision") then
-			-- playerWalk.isFixedRotation = false
-			physics.setGravity( 0, 6 )
-			transition.to( playerWalk, {delay = 100, rotation = -90, onComplete = function()
-				physics.setGravity( 0, 30 )
-			end} )
-		else
+		-- if (event.state == "redCollision") then
+		-- 	-- playerWalk.isFixedRotation = false
+		-- 	physics.setGravity( 0, 6 )
+		-- 	transition.to( playerWalk, {delay = 100, rotation = -90, onComplete = function()
+		-- 		physics.setGravity( 0, 30 )
+		-- 	end} )
+		-- else
 			playerWalk:setLinearVelocity( 0, 0 )
 			physics.setGravity( 0, 0 )
 			playerWalk:setLinearVelocity( 0, 0 )
-		end
+		-- end
 	end
 
 	function newPlayer:alwaysAwake( )

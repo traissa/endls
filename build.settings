@@ -37,7 +37,7 @@ settings = {
 	            },
 				UIAppFonts = 
 				{ 
-					"Half Bold Pixel-7.ttf",
+					"Half bold Pixel-7.ttf",
 					"Visitor TT1 BRK.ttf"
 				},
 				

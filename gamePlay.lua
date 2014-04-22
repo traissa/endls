@@ -10,6 +10,7 @@ local scene = composer.newScene()
 -- include Corona's "physics" library
 local physics = require "physics"
 physics.start(); physics.pause()
+physics.setGravity( 0, 100 )
 
 -- gamePlay required files
 local imageData  = require "AssetLocation"
@@ -645,7 +646,6 @@ function scene:show( event )
 		-- e.g. start timers, begin animation, play audio, etc.
 		self.gamePlay = "gamePlay2D"
 		physics.start( true )
-		physics.setGravity( 0, 30 )
 		-- physics.setDrawMode( "hybrid" )
 		Runtime:dispatchEvent( {name = "score", value = 0} )
 		physics.start()
