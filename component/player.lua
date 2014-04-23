@@ -7,7 +7,9 @@ function player:new( status , parentGroup )
 
 	local x, y = display.contentCenterX -170, display.contentHeight - 165
 	local newPlayer = display.newGroup( )
+	self.newPlayer = newPlayer
 	local playerWalk
+	self.playerWalk = playerWalk
 	local animation = true
 	-- local rotation = 0
 
@@ -25,26 +27,42 @@ function player:new( status , parentGroup )
 
 		playerWalk = display.newSprite( mySheet, sequenceData )
 		playerWalk.name = "player"
-		playerWalk.x , playerWalk.y = x,y
-		playerWalk.anchorX, playerWalk.anchorY = .5,1
-		playerWalk.xScale, playerWalk.yScale = .75, .75
-		-- player.rotation = rotation
-		playerWalk.isSensor = true
+		-- playerWalk.x , playerWalk.y = x,y
+		-- playerWalk.anchorX, playerWalk.anchorY = .5,1
+		-- playerWalk.xScale, playerWalk.yScale = .75, .75
+		-- playerWalk.isSensor = true
+		-- playerWalk:play( )
 
 		self:insert( playerWalk )
 
-		if (status) then
-			playerWalk:play( )
-		end
+		-- Runtime:addEventListener( "turnTranslationOff", self )
+		-- self:alwaysAwake()
+
+		-- self:addBody()
+		-- self:addBoundary()
+	end
+
+	function newPlayer:reinit()
+		print( "reinitiating" )
+		playerWalk.x , playerWalk.y = x,y
+		playerWalk.anchorX, playerWalk.anchorY = .5,1
+		playerWalk.xScale, playerWalk.yScale = .75, .75
+		playerWalk.isSensor = true
+		playerWalk:play( )
+
+		-- self:insert( playerWalk )
 
 		Runtime:addEventListener( "turnTranslationOff", self )
+		self:addBody()
+		self:addBoundary()
+		self:alwaysAwake()
 	end
 
 	function newPlayer:jump( )
-		-- playerWalk:applyForce( 0, -2500*2, playerWalk.x,playerWalk.y )
 		playerWalk:setLinearVelocity( 0, 0 )
 		playerWalk:applyForce( 0, -1000, playerWalk.x, playerWalk.y )
 		playerWalk:pause( )
+		playerWalk:setFrame( 5 )
 		timer.performWithDelay( 300, function()
 			if (animation) then
 				playerWalk:play( )
@@ -53,7 +71,7 @@ function player:new( status , parentGroup )
 	end
 
 	function newPlayer:addBody( )
-		-- local shapePlayer  = {-17,-67,  18,-67,  18,-6,  53,-6,  56,84,  -52,84,  -52,-6,  -17,-6}
+		print( "adding body" )
 		local shapePlayer = {-15,-40, 15,-40, 15,0, 37,0, 37,83, -37,83, -37,0, -15,0}
 		physics.addBody( playerWalk, {density=.1, friction=1, bounce=.1, shape = shapePlayer } )
 		playerWalk.isAwake = true
@@ -106,12 +124,9 @@ function player:new( status , parentGroup )
 		self.boundary1:removeSelf( )
 		self.boundary2:removeSelf( )
 		self.boundary1, self.boundary2 = nil, nil
-		playerWalk.isAwake = false
+		-- playerWalk.isAwake = false
 		playerWalk.isSensor = false
-
-		-- timer.performWithDelay( 275, function()
-			playerWalk:pause( )
-		-- end )
+		playerWalk:pause( )
 
 		-- if (event.state == "redCollision") then
 		-- 	-- playerWalk.isFixedRotation = false
@@ -120,9 +135,12 @@ function player:new( status , parentGroup )
 		-- 		physics.setGravity( 0, 30 )
 		-- 	end} )
 		-- else
-			playerWalk:setLinearVelocity( 0, 0 )
+			-- playerWalk:setLinearVelocity( 0, 0 )
 			physics.setGravity( 0, 0 )
 			playerWalk:setLinearVelocity( 0, 0 )
+			timer.performWithDelay( 30, function()
+				physics.removeBody( playerWalk )
+			end ) 
 		-- end
 	end
 
@@ -138,11 +156,15 @@ function player:new( status , parentGroup )
 	end
 
 	newPlayer:init( )
-	newPlayer:addBody( )
-	newPlayer:addBoundary( )
-	newPlayer:alwaysAwake( )
+	-- newPlayer:addBody( )
+	-- newPlayer:addBoundary( )
+	-- newPlayer:alwaysAwake( )
 
 	
 	return newPlayer
+end
+
+function player:reinit()
+	self.newPlayer:reinit()
 end
 

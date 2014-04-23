@@ -98,11 +98,11 @@ function scene:show( event )
 	
 	if phase == "will" then
 		if (event.params.state == "redCollision" ) then
-			sceneGroup.textDesc.text = "red coin is a trap" 
+			sceneGroup.textDesc.text = "red coin is a trap!!" 
 		elseif (event.params.state == "crushed2D") then
-			sceneGroup.textDesc.text = "mind the pedestrians"
+			sceneGroup.textDesc.text = "mind the pedestrians!!"
 		elseif (event.params.state == "crushed3D") then
-			sceneGroup.textDesc.text = "you're crushed"
+			sceneGroup.textDesc.text = "you're crushed!!"
 		end
 
 		sceneGroup.scoreTxt.text = "0"
@@ -112,7 +112,6 @@ function scene:show( event )
 		transition.to( sceneGroup.frontDisplay, {alpha = 1, onComplete = function()
 		  	-- sceneGroup:insert( self.background )
 		end} )
-		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
 
 		local currentTxt = 0

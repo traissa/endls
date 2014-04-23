@@ -10,7 +10,6 @@ local scene = composer.newScene()
 -- include Corona's "physics" library
 local physics = require "physics"
 physics.start(); physics.pause()
-physics.setGravity( 0, 100 )
 
 -- gamePlay required files
 local imageData  = require "AssetLocation"
@@ -48,7 +47,6 @@ function scene:create( event )
 	self.listenerBox = listenerBox
 	listenerBox.anchorX, listenerBox.anchorY = .5, 0
 	listenerBox.x, listenerBox.y = halfW, 0
-	listenerBox:addEventListener( "touch", self )
 	listenerBox.alpha = .01
 
 	-- so fake 3D moving tiles
@@ -87,9 +85,9 @@ function scene:create( event )
 	animatedTilesRight:play()
 	animatedTilesLeft:play()
 
-	local person = {}
-	self.personGroup = person
-	local i = 0
+	-- local person = {}
+	-- self.personGroup = person
+	-- local i = 0
 
 	-- receive final position of closePeople, if the animation bumps into screen game is over
 	local function listenerFunction(event)
@@ -104,15 +102,15 @@ function scene:create( event )
 		end
 	end
 
-	local function switchGroup(i)
+	function sceneGroup:switchGroup(i, personTable)
 		timer.performWithDelay( 1001, function()
 			-- print( "removing " .. tostring( i ))
-			if (person[i]) and peopleClose and sceneGroup.animation then
-				peopleClose:insert(person[i])
+			if (personTable[i]) and peopleClose and self.animation then
+				peopleClose:insert(personTable[i])
 				for j=i,0,-1 do
-					if (person [j]) then
-						if (person[j].isLive) then
-							person[j]:toFront( )
+					if (personTable[j]) then
+						if (personTable[j].isLive) then
+							personTable[j]:toFront( )
 						end
 					end
 				end
@@ -120,41 +118,57 @@ function scene:create( event )
 		end )
 	end
 
+	function sceneGroup:personOnScreen(event)
+		if ((event.position > -50) and (event.position < display.contentWidth + 50 )) then
+			if (self.animation) then
+				if (scene.gamePlay == "gamePlay2D") then
+					self:dispatchEvent( {name = "gameOver", state = "crushed2D"} )
+				elseif (scene.gamePlay == "gamePlay3D") then
+					self:dispatchEvent( {name = "gameOver", state = "crushed3D"} )
+				end
+			end
+		end
+	end
 
-	local function removePerson(object)
+	function sceneGroup:autoRemovePerson(object)
 		timer.performWithDelay( 8900, function()
 			-- if the object still exist, remove listener
 			if (sceneGroup.animation) then
 				print( "removing object number " .. tostring( object.ID ) )
 				object.isLive = false
-				object:removeEventListener( "personOnScreen", listenerFunction )
+				object:removeEventListener( "personOnScreen", self )
 			end
 		end )
 	end
 
-	timer.performWithDelay( 3500, function()
-		local randomNumber = math.random( )
-		if (randomNumber > .25) then
-			if (sceneGroup.animation) then
-				i = i+1
-				person[i] = opponent:new(true, peopleClose, i)
-				person[i].isLive = true
-				person[i].x = person[i].x + -1*(peopleFar.x)
-				peopleFar:insert(person[i])
-				person[i]:toBack( )
-				switchGroup(i)
-				person[i].ID = i
-				removePerson(person[i])
-				print( "CREATING PERSON NUMBER " .. tostring( i ) )
-				person[i]:addEventListener( "personOnScreen", listenerFunction )
+	function sceneGroup:createOpponent(i, personMatrix)
+		timer.performWithDelay( 3500, function()
+			local randomNumber = math.random( )
+			if (randomNumber > .25) then
+				if (sceneGroup.animation) then
+					i = i+1
+					personMatrix[i] = nil
+					personMatrix[i] = opponent:new(true, peopleClose, i)
+					personMatrix[i].isLive = true
+					personMatrix[i].x = personMatrix[i].x + -1*(peopleFar.x)
+					peopleFar:insert(personMatrix[i])
+					personMatrix[i]:toBack( )
+					personMatrix[i].ID = i
+					personMatrix[i]:addEventListener( "personOnScreen", self )
+					self:switchGroup(i, personMatrix)
+					self:autoRemovePerson(personMatrix[i])
+
+					self:createOpponent(i, personMatrix)
+				end
 			end
-		end
-	end, -1 )
+		end )
+		-- body
+	end
+
 	animatedTilesRight.alpha = 0
 	animatedTilesLeft.alpha = 0
-	-- animatedTiles.alpha = 0
 	
-	-- -- all display objects must be inserted into group
+	-- all display objects must be inserted into group
 	gamePlay3D:insert( farBackground )
 	gamePlay3D:insert( peopleFar)
 	gamePlay3D:insert( animatedTiles)
@@ -168,26 +182,18 @@ function scene:create( event )
 	local gamePlay2D = {}
 	self.gamePlay2D = gamePlay2D
 
-	-- local world2D = display.newContainer(display.contentWidth/4, display.contentHeight/4 )
-	-- self.world2D = world2D
-
 	gamePlay2D.coins = display.newGroup( )
 	gamePlay2D.frame = display.newGroup( )
 	gamePlay2D.display = display.newGroup( )
 	gamePlay2D.display.anchorChildren = true
 	gamePlay2D.frame.anchorChildren = true
-	-- print( gamePlay2D.display.x, gamePlay2D.display.y )
-	-- -- print( gamePlay2D.frame.x, gamePlay2D.frame.y )
 	gamePlay2D.display.x, gamePlay2D.display.y = display.contentCenterX, display.contentCenterY
 	gamePlay2D.frame.x, gamePlay2D.frame.y = display.contentCenterX, display.contentCenterY
 
-	-- world2D:insert( gamePlay2D.display )
 	gamePlay2D.display.anchorX, gamePlay2D.display.anchorY = .5, .5
 	gamePlay2D.frame.anchorX, gamePlay2D.frame.anchorY = .5, .48
-	-- gamePlay2D.display:insert( gamePlay2D.frame )
 
 	sceneGroup.animation = true
-	-- sceneGroup.coins = display.newGroup( )
 	
 	Runtime:addEventListener( "gameOver", sceneGroup )
 
@@ -200,6 +206,7 @@ function scene:create( event )
 		local _2DFloor = {}
 
 		local newFloor = display.newGroup( )
+		self.newFloor = newFloor
 
 		function newFloor:init( )
 			local nothing = display.newRect( display.contentCenterX, display.contentCenterY, 2000, 1 )
@@ -253,7 +260,7 @@ function scene:create( event )
 		end
 
 		newFloor:init()
-		newFloor:move()
+		-- newFloor:move()
 
 		return newFloor
 	end
@@ -269,6 +276,7 @@ function scene:create( event )
 		local newBg = display.newGroup( )
 
 		self:insert( newBg )
+		self.newBg = newBg
 
 		function newBg:init( )
 			for i=1,2 do
@@ -277,7 +285,6 @@ function scene:create( event )
 				_2Dbackground[i].x, _2Dbackground[i].y = x+((_2Dbackground[i].width)*(i-1))-7*(i-1), y
 				_2Dbackground[i].onScreen = true
 				gamePlay2D.display:insert( _2Dbackground[i] )
-				-- world2D:insert( _2Dbackground[i] )
 			end
 
 		end
@@ -317,12 +324,11 @@ function scene:create( event )
 
 
 		newBg:init()
-		newBg:move()
-
+		-- newBg:move()
 		return newBg
 	end
 
-	function sceneGroup:addcoins( )
+	function sceneGroup:addcoins(anotherGroup)
 		local num = math.random(1,100 )
 		local y = math.random(display.contentCenterY - 500, display.contentCenterY + 200)
 		-- local y = display.contentCenterY + 150
@@ -333,13 +339,13 @@ function scene:create( event )
 			if (sceneGroup.animation) then
 				if num > 60 then
 					local coins = coinRed:new( display.contentWidth , y );
-					gamePlay2D.display:insert( coins )
+					anotherGroup:insert( coins )
 				else
 					local coins = coinYellow:new( display.contentWidth , y )
-					gamePlay2D.display:insert( coins )
+					anotherGroup:insert( coins )
 				end
 			end
-			if self.animation then self:addcoins() end
+			if self.animation then self:addcoins(anotherGroup) end
 		end )
 	end
 
@@ -349,12 +355,12 @@ function scene:create( event )
 		self.rect = rect
 		rect.alpha = 0.01
 
-		rect:addEventListener( "touch", self )
+		-- rect:addEventListener( "touch", self )
 	end
 
 	local background = sceneGroup:background( sceneGroup.animation)
 	local floors = sceneGroup:floor( sceneGroup.animation)
-	sceneGroup:addcoins( )
+	-- sceneGroup:addcoins( )
 	sceneGroup:addForeTouch()
 
 	local player1 = player:new( "start", sceneGroup)
@@ -473,6 +479,44 @@ function scene:create( event )
 
 end
 
+function scene:init(event)
+	local sceneGroup = self.view
+	self.gameObjects = display.newGroup( )
+
+	-- group for coins
+	self.money = display.newGroup( )
+	self.gamePlay2D.display:insert(self.money)
+
+	-- table and group for opponents
+	self.humanMatrix = {}
+	self.humanGroup = display.newGroup( )
+	self.gamePlay3D:insert( self.humanGroup )
+
+	-- generate game objects
+	-- put player to position
+	player:reinit()
+
+	-- moving the background and ground
+	sceneGroup.newBg:move()
+	sceneGroup.newFloor:move()
+
+	-- create coins (2D) and opponents (3D)
+	sceneGroup:addcoins(self.money)
+	sceneGroup:createOpponent(0, self.humanMatrix)
+
+	-- add touch listeners to listenerBox and rect
+	function sceneGroup:addTouchListener()
+		self.rect:addEventListener( "touch", self )
+	end
+	sceneGroup:addTouchListener()
+	self.listenerBox:addEventListener( "touch", self )
+
+	-- let the game started!
+	physics.start( )
+	physics.setGravity( 0, 100 )
+
+end
+
 function scene:touch( event )
 	local sceneGroup = self.view
 
@@ -515,6 +559,7 @@ function scene:touch( event )
 	        transition.to( self.peopleFar, {time = slideTime, x = xPos, transition = easing.inOutSine} )
 	    end
 	    return true
+    elseif (event.target == self.rect) then
 	end
 end
 
@@ -573,9 +618,6 @@ function scene:gameOver(event)
 		composer.gotoScene("finishGame", options)
 	end
 
-	-- local function gameOverAnimation(sequence)
-	-- end
-
 	-- composer scene transition options
 	local options = {
 		-- effect = "crossFade",
@@ -617,6 +659,11 @@ function scene:gameOver(event)
 		scene.tiles:pause( )
 		scene.tilesRight:pause()
 		scene.tilesLeft:pause()
+
+		-- put phone in front of splatter
+		scene.gamePlay2D.display:toFront( )
+		scene.gamePlay2D.frame:toFront( )
+
 		transition.to( scene.gamePlay2D.frame, {time = 400, rotation = 12, y = display.contentHeight-400, onComplete = function()
 			transition.to( scene.gamePlay2D.frame, {time = 1000, y = display.contentHeight + 450, x = 140, rotation = 70, transition = easing.inOutSine} )
 		end} )
@@ -637,12 +684,11 @@ function scene:show( event )
 	
 	if phase == "will" then
 		-- Called when the scene is still off screen and is about to move on screen
-		animation = true
 		sceneGroup.animation = true
 
 		self.player.alpha = 0
 		transition.to( self.player, {time = 300, alpha = 1} )
-
+		self:init()
 	elseif phase == "did" then
 		-- Called when the scene is now on screen
 		-- 
@@ -650,7 +696,7 @@ function scene:show( event )
 		-- e.g. start timers, begin animation, play audio, etc.
 		self.gamePlay = "gamePlay2D"
 		physics.start( true )
-		-- physics.setDrawMode( "hybrid" )
+		physics.setDrawMode( "hybrid" )
 		Runtime:dispatchEvent( {name = "score", value = 0} )
 		physics.start()
 	end
@@ -662,18 +708,32 @@ function scene:hide( event )
 	local phase = event.phase
 	
 	if event.phase == "will" then
-		animation = false
-		self.animation = false
 		print( "set animation false" )
-		-- sceneGroup:removeSelf( )
 		sceneGroup.animation = false
-		scene.gamePlay2D.coins:removeSelf( )
-		scene.gamePlay2D.coins = nil
-		physics.stop( )
+		-- scene.gamePlay2D.coins:removeSelf( )
+		-- scene.gamePlay2D.coins = nil
+		-- physics.stop( )
+
 	elseif phase == "did" then
-		-- physics.stop()
-		composer.removeScene("gamePlay")
-		-- Called when the scene is now off screen
+		-- set everything back to position and remove gameObjects
+		self.tiles2D.isVisible = false
+		self.screenCrack.isVisible = false
+		self.splatter.isVisible = false
+
+		-- remove coins
+		self.money:removeSelf( )
+		self.money = nil
+
+		-- remove person
+		for i=1, #self.humanMatrix do
+			if (self.humanMatrix[i]) then
+				self.humanMatrix[i]:removeSelf( )
+				self.humanMatrix[i] = nil
+			end
+		end
+
+
+
 	end	
 	
 end

@@ -65,7 +65,7 @@ function scene:create( event )
 			if e.target.name == "playBtn" then
 				function callback( )
 					-- transition.to( self.frontDisplay, {alpha = .5, y = -50, onComplete = function()
-						composer.gotoScene( "gamePlay")
+						composer.gotoScene( "newGamePlay")
 					-- end} )
 				end
 			elseif e.target.name == "rateBtn" then

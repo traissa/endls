@@ -27,17 +27,23 @@ function opponent:new( status, touchGroup, number )
 		playerWalk.anchorX, playerWalk.anchorY = .5,1
 		playerWalk.xScale, playerWalk.yScale = .3, .3
 		playerWalk:toBack( )
+		playerWalk.isVisible = true
 
 		local animation = true
 
 		function setAnimation(event)
 			if (playerWalk) then
 				animation = false
-				print( "PAUSING PLAYERWALK " .. tostring( number ) )
+				Runtime:removeEventListener( "turnTranslationOff", setAnimation )
+				-- print( "PAUSING PLAYERWALK " .. tostring( number ) )
 				transition.pause( "opponentWalk")
-				if (event.state == "crushed3D") then
+				if (event.state == "crushed3D") and (playerWalk.isVisible) then
 					playerWalk:pause( )
+				else
+					playerWalk = nil
 				end
+
+
 			end
 		end
 
@@ -54,10 +60,13 @@ function opponent:new( status, touchGroup, number )
 						local finalx = x + (touchGroup.x - initx)
 						newPerson:dispatchEvent( {name = "personOnScreen", position = finalx} )
 						Runtime:removeEventListener( "turnTranslationOff", setAnimation )
+
+						if not ((finalx > -50) and (finalx < display.contentWidth + 50 )) then
+							playerWalk.isVisible = false
+						end
 						if (playerWalk) then
 							-- print( "removing person number " .. tostring( number ) )
 							playerWalk:removeSelf( )
-							-- print( "final position " .. tostring( finalx ) )
 							playerWalk = nil
 						end
 					end
